@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouScan — Brand intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/*═══ TOKENS ═══════════════════════════════════════════════════*/
+:root{
+  --bg:#f7f7f5;--bg-card:#ffffff;--bg-hover:#f1f1ee;--bg-active:#e9e9e5;--bg-sunken:#efefec;
+  --border:#e4e4e0;--border-mid:#d2d2cc;--border-strong:#b8b8b1;
+  --text-1:#1c1c1a;--text-2:#5a5a55;--text-3:#8a8a83;--text-inverse:#f7f7f5;
+  --critical:#c92a2a;--critical-soft:#fff1f0;--critical-border:#fca5a5;
+  --important:#b45309;--important-soft:#fffbeb;--important-border:#fde68a;
+  --info:#4a5568;--info-soft:#eef2f6;--info-border:#cbd5e0;
+  --success:#15803d;--success-soft:#dcfce7;
+  --accent:#2563eb;--accent-soft:#eff6ff;--accent-hover:#1d4ed8;--accent-border:#bfdbfe;
+  --destructive:#9b1b3b;
+  --warn:#fbbf24;
+  --r-sm:3px;--r:5px;--r-lg:8px;
+  --shadow-sm:0 1px 2px rgba(28,28,26,.05);
+  --shadow:0 4px 12px rgba(28,28,26,.06),0 2px 4px rgba(28,28,26,.04);
+  --shadow-lg:0 12px 32px rgba(28,28,26,.10),0 4px 8px rgba(28,28,26,.06);
+  --shadow-overlay:0 -1px 0 var(--border),0 24px 48px rgba(28,28,26,.16),0 8px 16px rgba(28,28,26,.08);
+  --t-fast:.12s;--t-base:.18s;--t-slow:.26s;
+  --ease:cubic-bezier(.32,.72,0,1);
+}
+:root.dark{
+  --bg:#15151a;--bg-card:#1c1c22;--bg-hover:#23232b;--bg-active:#2a2a33;--bg-sunken:#101015;
+  --border:#2a2a33;--border-mid:#3a3a44;--border-strong:#4a4a55;
+  --text-1:#f0f0ec;--text-2:#a8a8a2;--text-3:#74746e;--text-inverse:#1c1c1a;
+  --critical-soft:#3a1414;--critical-border:#7a2424;
+  --important-soft:#3a2a10;--important-border:#7a5424;
+  --info-soft:#1f2530;--info-border:#3a4458;
+  --accent-soft:#1a2540;--accent-border:#2a4080;
+  --success-soft:#103820;
+}
+
+/*═══ RESET ════════════════════════════════════════════════════*/
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;font-size:13px;line-height:1.5;background:var(--bg);color:var(--text-1);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+::selection{background:var(--accent);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:5px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--border-strong)}
+
+/*═══ APP SHELL ════════════════════════════════════════════════*/
+#app{display:grid;grid-template-columns:220px 1fr;height:100vh;width:100vw;overflow:hidden}
+#app.crisis-mode{filter:brightness(.92) contrast(1.04)}
+
+/*── SIDEBAR ──*/
+#sidebar{background:var(--bg-card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.brand-mark{width:24px;height:24px;background:var(--text-1);color:var(--bg-card);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;letter-spacing:-.02em}
+.brand-name{font-weight:600;font-size:13px;letter-spacing:-.01em}
+.workspace{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;cursor:pointer;flex-shrink:0;transition:background var(--t-fast)}
+.workspace:hover{background:var(--bg-hover)}
+.workspace-avatar{width:22px;height:22px;border-radius:5px;background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:10px;flex-shrink:0}
+.workspace-name{font-size:12px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.workspace-chev{color:var(--text-3);flex-shrink:0}
+
+.nav-scroll{flex:1;overflow-y:auto;padding:10px 8px}
+.nav-section{margin-bottom:14px}
+.nav-section-label{padding:4px 8px;font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between}
+.nav-section-label .add-btn{opacity:0;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:var(--text-3);transition:opacity var(--t-fast),background var(--t-fast)}
+.nav-section:hover .add-btn{opacity:1}
+.add-btn:hover{background:var(--bg-active);color:var(--text-1)}
+
+.nav-item{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:var(--r-sm);font-size:13px;color:var(--text-2);cursor:pointer;transition:background var(--t-fast),color var(--t-fast);user-select:none}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-1)}
+.nav-item.active{background:var(--bg-active);color:var(--text-1);font-weight:500}
+.nav-item .nav-icon{width:15px;height:15px;flex-shrink:0;opacity:.85}
+.nav-item.active .nav-icon{opacity:1}
+.nav-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-count{font-size:11px;color:var(--text-3);font-variant-numeric:tabular-nums}
+.nav-item.active .nav-count{color:var(--text-2)}
+.nav-children{margin-top:2px;padding-left:14px;display:flex;flex-direction:column;gap:1px}
+.nav-child{padding:5px 8px;font-size:12px;color:var(--text-2);border-radius:var(--r-sm);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:background var(--t-fast),color var(--t-fast)}
+.nav-child:hover{background:var(--bg-hover);color:var(--text-1)}
+.nav-child.active{background:var(--accent-soft);color:var(--accent);font-weight:500}
+:root.dark .nav-child.active{color:#93c5fd}
+
+.nav-footer{padding:10px 12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.user-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:10px;flex-shrink:0}
+.user-meta{flex:1;min-width:0}
+.user-name{font-size:12px;font-weight:500;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-role{font-size:11px;color:var(--text-3);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/*── MAIN ──*/
+main{display:flex;flex-direction:column;overflow:hidden;min-width:0;background:var(--bg)}
+#topbar{height:48px;background:var(--bg-card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;flex-shrink:0;z-index:5}
+.crumbs{display:flex;align-items:center;gap:6px;flex:1;min-width:0;font-size:13px}
+.crumb{color:var(--text-2);cursor:pointer;transition:color var(--t-fast);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crumb:hover{color:var(--text-1)}
+.crumb.current{color:var(--text-1);font-weight:500;cursor:default}
+.crumb-sep{color:var(--text-3);font-size:11px;flex-shrink:0}
+
+.search-pill{flex:1;max-width:360px;display:flex;align-items:center;gap:7px;padding:5px 10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text-3);cursor:pointer;transition:background var(--t-fast),border-color var(--t-fast);font-size:12px}
+.search-pill:hover{background:var(--bg-hover);border-color:var(--border-mid);color:var(--text-2)}
+.search-pill kbd{font-family:inherit;font-size:10px;padding:1px 5px;background:var(--bg-card);border:1px solid var(--border);border-radius:3px;color:var(--text-3);margin-left:auto}
+
+.topbar-actions{display:flex;align-items:center;gap:4px}
+
+/*── BELL ──*/
+.icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);color:var(--text-2);cursor:pointer;transition:background var(--t-fast),color var(--t-fast);position:relative}
+.icon-btn:hover{background:var(--bg-hover);color:var(--text-1)}
+.icon-btn.active{background:var(--bg-active);color:var(--text-1)}
+.bell-badge{position:absolute;top:4px;right:4px;min-width:14px;height:14px;padding:0 4px;background:var(--accent);color:#fff;border-radius:7px;font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center;line-height:1;border:1.5px solid var(--bg-card);font-variant-numeric:tabular-nums}
+.bell-badge.critical{background:var(--critical)}
+.bell-icon.critical{color:var(--critical)}
+
+/*═══ VIEW ════════════════════════════════════════════════════*/
+#view{flex:1;display:flex;overflow:hidden;min-height:0;position:relative}
+
+/*── ALERT LIST ──*/
+.list-pane{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg);transition:flex var(--t-base) var(--ease)}
+.list-header{padding:14px 20px 10px;border-bottom:1px solid var(--border);background:var(--bg-card);display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+.list-title-row{display:flex;align-items:center;gap:12px}
+.list-title{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.list-count{font-size:12px;color:var(--text-3);font-variant-numeric:tabular-nums;background:var(--bg);padding:2px 7px;border-radius:10px;border:1px solid var(--border)}
+.list-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:0;border-bottom:0}
+.tab{padding:6px 12px;font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color var(--t-fast),border-color var(--t-fast);margin-bottom:-11px;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--text-1)}
+.tab.active{color:var(--text-1);border-bottom-color:var(--text-1)}
+.tab-count{font-size:11px;color:var(--text-3);background:var(--bg);padding:1px 6px;border-radius:8px;font-variant-numeric:tabular-nums}
+.tab.active .tab-count{background:var(--bg-active);color:var(--text-2)}
+
+.filter-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.filter-pill{padding:3px 10px;border-radius:14px;border:1px solid var(--border);font-size:11px;color:var(--text-2);cursor:pointer;background:var(--bg-card);transition:all var(--t-fast);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;user-select:none}
+.filter-pill:hover{border-color:var(--border-strong);color:var(--text-1)}
+.filter-pill.active{background:var(--text-1);border-color:var(--text-1);color:var(--bg-card)}
+.filter-pill .pill-dot{width:5px;height:5px;border-radius:50%}
+.filter-pill .pill-x{font-size:13px;line-height:1;opacity:.6;margin-left:2px}
+
+.list-search{display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);max-width:240px;flex:1;min-width:140px}
+.list-search input{flex:1;background:transparent;border:none;outline:none;font-size:12px}
+.list-search input::placeholder{color:var(--text-3)}
+
+.list-body{flex:1;overflow-y:auto;background:var(--bg-card)}
+.list-section{position:sticky;top:0;background:var(--bg-card);padding:10px 20px 4px;font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);z-index:1}
+
+.alert-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);cursor:pointer;background:var(--bg-card);position:relative;transition:background var(--t-fast)}
+.alert-row:hover{background:var(--bg-hover)}
+.alert-row.selected{background:var(--accent-soft)}
+:root.dark .alert-row.selected{background:rgba(37,99,235,.08)}
+.alert-row.read{opacity:.66}
+.alert-row.removing{animation:rowRemove .26s var(--ease) forwards}
+@keyframes rowRemove{to{opacity:0;transform:translateX(-12px);max-height:0;padding:0;border:0}}
+.alert-row.entering{animation:rowEnter .32s var(--ease)}
+@keyframes rowEnter{from{opacity:0;transform:translateY(-8px);background:var(--accent-soft)}to{opacity:1;transform:translateY(0)}}
+
+.alert-bar{width:3px;flex-shrink:0;align-self:stretch}
+.bar-critical{background:var(--critical)}.bar-important{background:var(--important)}.bar-info{background:var(--info)}
+
+.alert-main{flex:1;padding:11px 16px 11px 14px;min-width:0;display:flex;flex-direction:column;gap:3px}
+.alert-title-row{display:flex;align-items:center;gap:8px;min-width:0}
+.alert-title{font-size:13px;font-weight:500;color:var(--text-1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.alert-row.read .alert-title{font-weight:400}
+.alert-time{font-size:11px;color:var(--text-3);white-space:nowrap;flex-shrink:0;font-variant-numeric:tabular-nums}
+.alert-meta{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-3);min-width:0}
+.alert-meta>*{flex-shrink:0}
+.alert-meta .meta-summary{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-2)}
+.dot-sep{color:var(--text-3);font-size:9px}
+
+.alert-actions{display:none;align-items:center;gap:2px;padding:0 12px}
+.alert-row:hover .alert-actions{display:flex}
+.row-action{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);color:var(--text-3);transition:background var(--t-fast),color var(--t-fast)}
+.row-action:hover{background:var(--bg-active);color:var(--text-1)}
+
+.unread-indicator{width:6px;height:6px;border-radius:50%;background:var(--accent);align-self:center;margin-right:14px;flex-shrink:0}
+.alert-row.read .unread-indicator{visibility:hidden}
+
+/*── EMPTY STATES ──*/
+.empty{padding:60px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--text-2)}
+.empty-icon{width:44px;height:44px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-3)}
+.empty-title{font-size:14px;font-weight:600;color:var(--text-1)}
+.empty-body{font-size:13px;color:var(--text-2);max-width:340px;line-height:1.55}
+
+/*── DETAIL PANE ──*/
+.detail-pane{width:480px;flex-shrink:0;background:var(--bg-card);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;animation:detailIn var(--t-slow) var(--ease)}
+@keyframes detailIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.detail-header{padding:16px 20px 14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.detail-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.detail-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-3)}
+.detail-title{font-size:16px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
+.detail-sublink{font-size:12px;color:var(--text-2);display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.detail-sublink a{color:var(--text-2)}
+.detail-sublink a:hover{color:var(--accent)}
+
+.detail-body{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:18px}
+.detail-section{display:flex;flex-direction:column;gap:8px}
+.section-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)}
+
+.condition-banner{padding:11px 14px;border-radius:var(--r);font-size:13px;font-weight:500;line-height:1.45;display:flex;align-items:flex-start;gap:10px}
+.condition-banner.critical{background:var(--critical-soft);border:1px solid var(--critical-border);color:var(--critical)}
+.condition-banner.important{background:var(--important-soft);border:1px solid var(--important-border);color:var(--important)}
+.condition-banner.info{background:var(--info-soft);border:1px solid var(--info-border);color:var(--info)}
+.condition-banner-icon{flex-shrink:0;margin-top:1px}
+
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px 8px;font-size:11px;color:var(--text-1);font-weight:500}
+.chip-key{color:var(--text-3);font-weight:400}
+
+.mention-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px}
+.mention-card+.mention-card{margin-top:8px}
+.mention-head{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.mention-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--border-mid),var(--border-strong));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--bg-card);flex-shrink:0}
+.mention-author{font-size:12px;font-weight:500;line-height:1.2}
+.mention-platform{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:5px;line-height:1.2}
+.verified-badge{color:var(--accent);display:inline-flex;align-items:center}
+.mention-text{font-size:12.5px;line-height:1.55;color:var(--text-1)}
+.mention-text mark{background:#fef3c7;color:#78350f;border-radius:2px;padding:0 2px;font-style:normal;font-weight:500}
+:root.dark .mention-text mark{background:#5c4810;color:#fde68a}
+.mention-foot{margin-top:8px;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-3)}
+.mention-stat{display:flex;align-items:center;gap:4px}
+
+.detail-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--bg-card)}
+
+/*═══ BUTTONS ═════════════════════════════════════════════════*/
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-sm);font-size:12.5px;font-weight:500;transition:background var(--t-fast),border-color var(--t-fast),color var(--t-fast);cursor:pointer;border:1px solid transparent;white-space:nowrap;line-height:1.4;user-select:none}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn-primary{background:var(--text-1);color:var(--bg-card);border-color:var(--text-1)}
+.btn-primary:hover{background:#000}
+:root.dark .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+:root.dark .btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn-secondary{background:var(--bg-card);color:var(--text-1);border-color:var(--border-mid)}
+.btn-secondary:hover{background:var(--bg-hover);border-color:var(--border-strong)}
+.btn-ghost{background:transparent;color:var(--text-2);border-color:transparent}
+.btn-ghost:hover{background:var(--bg-hover);color:var(--text-1)}
+.btn-danger{background:var(--bg-card);color:var(--destructive);border-color:var(--border-mid)}
+.btn-danger:hover{background:#fff1f4;border-color:var(--destructive)}
+:root.dark .btn-danger:hover{background:#3a1a24}
+.btn-sm{padding:4px 9px;font-size:12px}
+.btn-icon{padding:6px;width:30px;justify-content:center}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/*═══ SEVERITY BADGE ══════════════════════════════════════════*/
+.sev{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:11px;line-height:1.4}
+.sev-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.sev.critical{background:var(--critical-soft);color:var(--critical);border:1px solid var(--critical-border)}
+.sev.important{background:var(--important-soft);color:var(--important);border:1px solid var(--important-border)}
+.sev.info{background:var(--info-soft);color:var(--info);border:1px solid var(--info-border)}
+.sev.muted{background:var(--bg);color:var(--text-3);border:1px solid var(--border)}
+
+/*═══ NOTIFICATION CENTER ═════════════════════════════════════*/
+.overlay-backdrop{position:fixed;inset:0;background:rgba(28,28,26,.16);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity var(--t-base) var(--ease);z-index:60}
+.overlay-backdrop.show{opacity:1;pointer-events:auto}
+:root.dark .overlay-backdrop{background:rgba(0,0,0,.4)}
+
+.notif-center{position:fixed;top:0;right:0;height:100vh;width:420px;max-width:92vw;background:var(--bg-card);border-left:1px solid var(--border);box-shadow:var(--shadow-overlay);display:flex;flex-direction:column;z-index:70;transform:translateX(100%);transition:transform var(--t-base) var(--ease)}
+.notif-center.open{transform:translateX(0)}
+.notif-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.notif-title{font-size:14px;font-weight:600;flex:1}
+.notif-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 12px;flex-shrink:0}
+.notif-tab{padding:8px 14px;font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color var(--t-fast),border-color var(--t-fast);display:flex;align-items:center;gap:6px}
+.notif-tab:hover{color:var(--text-1)}
+.notif-tab.active{color:var(--text-1);border-bottom-color:var(--text-1)}
+.notif-body{flex:1;overflow-y:auto}
+.notif-day-label{padding:10px 18px 4px;font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;background:var(--bg-card);position:sticky;top:0;z-index:1}
+.notif-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t-fast)}
+.notif-row:hover{background:var(--bg-hover)}
+.notif-row.unread{background:var(--bg-card)}
+.notif-row.read{background:var(--bg-sunken);opacity:.78}
+.notif-row-bar{width:3px;flex-shrink:0}
+.notif-row-body{flex:1;padding:10px 14px 10px 12px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.notif-row-top{display:flex;align-items:center;gap:8px}
+.notif-row-name{font-size:12.5px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notif-row-time{font-size:10.5px;color:var(--text-3);white-space:nowrap;flex-shrink:0}
+.notif-row-summary{font-size:11.5px;color:var(--text-2);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notif-row-actions{display:none;gap:4px;margin-top:6px}
+.notif-row:hover .notif-row-actions{display:flex}
+.notif-foot{padding:10px 18px;border-top:1px solid var(--border);font-size:12px;flex-shrink:0;text-align:center}
+
+/*═══ RULE EDITOR ═════════════════════════════════════════════*/
+.rule-editor{flex:1;display:flex;overflow:hidden;background:var(--bg)}
+.rule-form{flex:1;overflow-y:auto;padding:24px 28px;background:var(--bg-card);min-width:0}
+.rule-chart-side{width:380px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg);overflow-y:auto;padding:24px}
+.rule-form.compact{padding:16px 18px}
+.rule-chart-side.compact{width:100%;border-left:none;border-top:1px solid var(--border);padding:16px 18px}
+
+.field{margin-bottom:18px}
+.field-label{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;display:block}
+.field-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;line-height:1.8}
+.field-text{font-size:13px;color:var(--text-1)}
+.field-input{background:var(--bg);border:1px solid var(--border-mid);border-radius:var(--r-sm);padding:5px 9px;font-size:13px;color:var(--text-1);width:100%;max-width:340px;transition:border-color var(--t-fast)}
+.field-input:focus{outline:none;border-color:var(--accent);background:var(--bg-card)}
+.inline-input{width:54px;text-align:center;padding:3px 6px}
+.inline-select{display:inline-flex;align-items:center;background:var(--bg);border:1px solid var(--border-mid);border-radius:var(--r-sm);padding:3px 4px 3px 8px;font-size:13px;cursor:pointer;transition:border-color var(--t-fast),background var(--t-fast)}
+.inline-select:hover{border-color:var(--border-strong);background:var(--bg-card)}
+.inline-select select{background:transparent;border:none;outline:none;cursor:pointer;padding-right:4px;color:var(--text-1)}
+
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;max-width:780px;margin-bottom:24px}
+.preset-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:border-color var(--t-fast),box-shadow var(--t-fast),transform var(--t-fast);text-align:left}
+.preset-card:hover{border-color:var(--border-strong);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.preset-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.preset-icon{width:28px;height:28px;border-radius:var(--r-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.preset-name{font-size:13px;font-weight:600;margin-bottom:3px}
+.preset-desc{font-size:11.5px;color:var(--text-2);line-height:1.45}
+
+.summary-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-top:8px;transition:border-color var(--t-base)}
+.summary-box.flash{animation:summaryFlash 1s var(--ease)}
+@keyframes summaryFlash{0%{border-color:var(--accent);background:var(--accent-soft)}100%{border-color:var(--border);background:var(--bg)}}
+.summary-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:5px}
+.summary-text{font-size:13px;color:var(--text-1);line-height:1.55}
+.summary-text em{font-style:normal;font-weight:600;color:var(--text-1);background:var(--bg-active);padding:0 4px;border-radius:3px}
+
+/*═══ FORECAST CHART ══════════════════════════════════════════*/
+.fc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.fc-stat{display:flex;flex-direction:column;gap:2px}
+.fc-stat-num{font-size:24px;font-weight:600;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+.fc-stat-label{font-size:11px;color:var(--text-2)}
+.fc-meta{font-size:10.5px;color:var(--text-3);text-align:right;line-height:1.45}
+.fc-chart{position:relative;padding:6px 0 18px}
+.fc-bars{display:flex;align-items:flex-end;gap:3px;height:96px}
+.fc-bar{flex:1;background:var(--info);opacity:.5;border-radius:2px 2px 0 0;cursor:pointer;transition:opacity var(--t-fast),background var(--t-fast),transform var(--t-fast);min-width:4px;position:relative}
+.fc-bar:hover{opacity:1;transform:scaleY(1.04);transform-origin:bottom}
+.fc-bar.active{opacity:1;background:var(--accent)}
+.fc-bar.warn{background:var(--warn);opacity:.85}
+.fc-bar.warn.active{background:#d97706;opacity:1}
+.fc-bar.zero{background:var(--border-mid);opacity:.55;height:2px!important}
+.fc-axis{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);font-variant-numeric:tabular-nums}
+.fc-baseline{position:absolute;left:0;right:0;bottom:18px;height:1px;background:var(--border)}
+.fc-tip{position:absolute;background:var(--text-1);color:var(--bg-card);font-size:11px;padding:4px 8px;border-radius:3px;pointer-events:none;white-space:nowrap;z-index:10;font-weight:500;transform:translate(-50%,-100%);margin-top:-6px}
+.fc-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--text-1)}
+
+.warn-strip{background:var(--important-soft);border:1px solid var(--important-border);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--important);line-height:1.5;display:flex;align-items:flex-start;gap:9px;margin-bottom:14px}
+.warn-strip strong{font-weight:600}
+.warn-strip-icon{flex-shrink:0;margin-top:1px}
+
+.samples-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-top:14px}
+.samples-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:12px;font-weight:500}
+.samples-day{color:var(--text-1)}
+.samples-sub{font-size:11px;color:var(--text-3);font-weight:400}
+
+/*═══ TABLE (Rules list) ══════════════════════════════════════*/
+.tbl-wrap{padding:18px 24px;flex:1;overflow:auto;background:var(--bg)}
+.tbl{width:100%;border-collapse:collapse;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.tbl th{text-align:left;padding:9px 14px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg-card);position:sticky;top:0}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr{cursor:pointer;transition:background var(--t-fast)}
+.tbl tbody tr:hover{background:var(--bg-hover)}
+.tbl tbody tr.zero-fire td{opacity:.5}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.health-warn{color:var(--important);font-weight:500}
+.health-crit{color:var(--critical);font-weight:500}
+.row-actions-cell{width:1px;white-space:nowrap}
+.row-actions-cell .actions{display:none;gap:2px}
+.tbl tbody tr:hover .row-actions-cell .actions{display:flex}
+
+.rule-cell{display:flex;align-items:center;gap:10px}
+.rule-bar{width:3px;height:18px;border-radius:2px;flex-shrink:0}
+
+/*═══ EDIT-FROM-ALERT (split panel inside detail pane) ══════════*/
+.detail-pane.with-editor{width:820px}
+.editor-panel{position:absolute;top:0;right:0;height:100%;width:440px;background:var(--bg-card);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-overlay);transform:translateX(100%);transition:transform var(--t-base) var(--ease);z-index:8}
+.editor-panel.open{transform:translateX(0)}
+.editor-panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-shrink:0}
+.editor-panel-head .ep-context{font-size:10.5px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.editor-panel-head .ep-title{font-size:14px;font-weight:600;line-height:1.3}
+.editor-panel-body{flex:1;overflow-y:auto;padding:16px 18px}
+.editor-panel-foot{padding:11px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--bg-card)}
+.editor-divider{height:1px;background:var(--border);margin:14px 0}
+
+/*═══ TOAST ══════════════════════════════════════════════════*/
+#toast-stack{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column-reverse;gap:8px;z-index:200;pointer-events:none}
+.toast{background:var(--text-1);color:var(--text-inverse);font-size:13px;padding:10px 14px;border-radius:var(--r);display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);pointer-events:auto;animation:toastIn .26s var(--ease);min-width:280px;position:relative;overflow:hidden}
+.toast.leaving{animation:toastOut .22s var(--ease) forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(20px)}}
+.toast-icon{flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.toast-text{flex:1;line-height:1.4}
+.toast-action{color:#93c5fd;font-weight:500;font-size:12.5px;cursor:pointer;flex-shrink:0;padding:2px 6px;border-radius:3px;transition:background var(--t-fast)}
+.toast-action:hover{background:rgba(255,255,255,.1)}
+.toast-progress{position:absolute;left:0;bottom:0;height:2px;background:#3b82f6;width:100%;transform-origin:left;animation:progress 8s linear forwards}
+@keyframes progress{to{transform:scaleX(0)}}
+:root.dark .toast{background:#2a2a33;border:1px solid var(--border)}
+
+/*═══ COMMAND PALETTE ════════════════════════════════════════*/
+.cmdk{position:fixed;top:18%;left:50%;transform:translateX(-50%) scale(.96);width:560px;max-width:92vw;background:var(--bg-card);border:1px solid var(--border-mid);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);z-index:80;opacity:0;pointer-events:none;transition:transform var(--t-base) var(--ease),opacity var(--t-base) var(--ease)}
+.cmdk.open{opacity:1;pointer-events:auto;transform:translateX(-50%) scale(1)}
+.cmdk-input-wrap{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.cmdk-input{flex:1;background:transparent;border:none;outline:none;font-size:14px;color:var(--text-1)}
+.cmdk-input::placeholder{color:var(--text-3)}
+.cmdk-list{max-height:340px;overflow-y:auto;padding:6px 6px 8px}
+.cmdk-section{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px 4px}
+.cmdk-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--r-sm);cursor:pointer;font-size:13px}
+.cmdk-item.active{background:var(--bg-active)}
+.cmdk-item-icon{width:14px;height:14px;color:var(--text-3);flex-shrink:0}
+.cmdk-item-shortcut{margin-left:auto;font-size:11px;color:var(--text-3)}
+
+/*═══ DEBUG PANEL (floating) ═════════════════════════════════*/
+#debug{position:fixed;bottom:20px;right:20px;z-index:300;font-family:'Inter',sans-serif}
+.debug-fab{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#1c1c1a;color:#f0f0ec;border-radius:20px;box-shadow:var(--shadow-lg);cursor:pointer;font-size:12px;font-weight:500;border:1px solid #2a2a28;transition:transform var(--t-fast),background var(--t-fast)}
+.debug-fab:hover{background:#2a2a28;transform:translateY(-1px)}
+.debug-fab.hidden{display:none}
+.debug-fab .pulse{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.18);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
+.debug-fab kbd{font-family:inherit;font-size:10px;padding:1px 5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:3px;color:#a8a8a2}
+
+.debug-panel{width:300px;background:#1c1c1a;color:#f0f0ec;border-radius:var(--r-lg);box-shadow:var(--shadow-lg);border:1px solid #2a2a28;overflow:hidden;display:none;flex-direction:column;max-height:calc(100vh - 60px)}
+.debug-panel.open{display:flex;animation:debugIn .2s var(--ease)}
+@keyframes debugIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.debug-header{padding:11px 14px;border-bottom:1px solid #2a2a28;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.debug-title{font-size:12px;font-weight:600;flex:1;display:flex;align-items:center;gap:7px}
+.debug-title .pulse{width:6px;height:6px;border-radius:50%;background:#22c55e}
+.debug-close{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:#74746e;cursor:pointer;transition:background var(--t-fast),color var(--t-fast)}
+.debug-close:hover{background:#2a2a28;color:#f0f0ec}
+.debug-body{flex:1;overflow-y:auto;padding:6px 0}
+.debug-section{padding:8px 14px}
+.debug-section+.debug-section{border-top:1px solid #2a2a28}
+.debug-section-label{font-size:9.5px;font-weight:600;color:#74746e;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.debug-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.debug-btn{display:flex;align-items:center;gap:7px;padding:7px 9px;background:#2a2a28;border:1px solid #2a2a28;color:#d6d6d0;border-radius:4px;font-size:11.5px;font-weight:500;cursor:pointer;transition:background var(--t-fast),border-color var(--t-fast),color var(--t-fast);text-align:left}
+.debug-btn:hover{background:#34342f;border-color:#3a3a34;color:#f0f0ec}
+.debug-btn .dbtn-icon{flex-shrink:0;width:12px;height:12px;color:#74746e}
+.debug-btn:hover .dbtn-icon{color:#f0f0ec}
+.debug-btn.danger:hover{background:#3a1818;border-color:#7a2424;color:#fca5a5}
+.debug-btn.danger:hover .dbtn-icon{color:#fca5a5}
+.debug-btn-full{grid-column:1/-1}
+.debug-toggle{display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:#23231f;border-radius:4px;font-size:11.5px;cursor:pointer;color:#d6d6d0;transition:background var(--t-fast)}
+.debug-toggle:hover{background:#2a2a28}
+.debug-toggle-switch{width:26px;height:14px;background:#3a3a34;border-radius:8px;position:relative;flex-shrink:0;transition:background var(--t-fast)}
+.debug-toggle-switch::after{content:'';position:absolute;left:2px;top:2px;width:10px;height:10px;background:#74746e;border-radius:50%;transition:left var(--t-fast),background var(--t-fast)}
+.debug-toggle.on .debug-toggle-switch{background:#22c55e}
+.debug-toggle.on .debug-toggle-switch::after{left:14px;background:#fff}
+
+.debug-stats{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#a8a8a2}
+.debug-stat{display:flex;justify-content:space-between;padding:2px 0}
+.debug-stat-val{color:#f0f0ec;font-variant-numeric:tabular-nums;font-weight:500}
+
+/*═══ MISC ═══════════════════════════════════════════════════*/
+.divider{height:1px;background:var(--border);margin:14px 0}
+.muted{color:var(--text-3)}
+.mono{font-feature-settings:"tnum";font-variant-numeric:tabular-nums}
+.spinner{width:14px;height:14px;border:1.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dot-flash{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--critical);box-shadow:0 0 0 0 rgba(201,42,42,.5);animation:dotPulse 1.6s ease infinite}
+@keyframes dotPulse{0%{box-shadow:0 0 0 0 rgba(201,42,42,.5)}70%{box-shadow:0 0 0 8px rgba(201,42,42,0)}100%{box-shadow:0 0 0 0 rgba(201,42,42,0)}}
+
+/*═══ RESPONSIVE ═════════════════════════════════════════════*/
+@media (max-width:1100px){
+  .detail-pane{width:420px}
+  .detail-pane.with-editor{width:760px}
+  .rule-chart-side{width:340px}
+}
+@media (max-width:1300px){
+  .detail-pane.with-editor .editor-panel{width:400px}
+}
+@media (max-width:900px){
+  #app{grid-template-columns:60px 1fr}
+  .brand-name,.workspace-name,.workspace-chev,.user-meta,.nav-item-label,.nav-count,.nav-section-label,.nav-children{display:none}
+  .nav-item{justify-content:center;padding:8px}
+  .workspace{justify-content:center}
+  .nav-footer{justify-content:center}
+  .detail-pane{position:absolute;top:0;right:0;height:100%;width:min(420px,90vw);box-shadow:var(--shadow-overlay);z-index:10}
+}
+@media (max-width:640px){
+  #app{grid-template-columns:1fr}
+  #sidebar{display:none}
+  .list-header{padding:12px 14px 8px}
+  .list-title{font-size:16px}
+  .alert-main{padding:10px 12px}
+  .rule-editor{flex-direction:column}
+  .rule-chart-side{width:100%;border-left:none;border-top:1px solid var(--border)}
+  .detail-pane{width:100vw}
+  #toast-stack{left:12px;right:12px;transform:none}
+  .toast{min-width:0;width:100%}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">Y</div>
+      <div class="brand-name">YouScan</div>
+    </div>
+    <div class="workspace">
+      <div class="workspace-avatar">NU</div>
+      <div class="workspace-name">Nike CEE</div>
+      <svg class="workspace-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <nav class="nav-scroll" id="nav-scroll"></nav>
+    <div class="nav-footer">
+      <div class="user-avatar">KP</div>
+      <div class="user-meta">
+        <div class="user-name">Kateryna P.</div>
+        <div class="user-role">PR Specialist</div>
+      </div>
+      <button class="icon-btn" style="width:24px;height:24px" title="Settings"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    </div>
+  </aside>
+
+  <main>
+    <header id="topbar">
+      <div class="crumbs" id="crumbs"></div>
+      <div class="search-pill" id="search-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <span>Search or jump to…</span>
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" title="Help">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+        <button class="icon-btn" id="bell-btn" title="Notifications">
+          <svg class="bell-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="bell-badge" id="bell-badge" style="display:none">0</span>
+        </button>
+      </div>
+    </header>
+    <div id="view"></div>
+  </main>
+</div>
+
+<!-- Overlays -->
+<div class="overlay-backdrop" id="backdrop"></div>
+<aside class="notif-center" id="notif-center"></aside>
+<div class="cmdk" id="cmdk"></div>
+<div id="toast-stack"></div>
+
+<!-- Debug panel -->
+<div id="debug">
+  <div class="debug-fab" id="debug-fab">
+    <span class="pulse"></span>
+    <span>Demo controls</span>
+    <kbd>D</kbd>
+  </div>
+  <div class="debug-panel" id="debug-panel"></div>
+</div>
+
+<script>
+/*═══════════════════════════════════════════════════════════════
+  ICONS (inline SVG factory)
+═══════════════════════════════════════════════════════════════*/
+const ICO = {
+  topic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>',
+  analytics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  alerts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  inbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
+  rules: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  reports: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  team: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  hash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+  alertTri: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  flame: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  twitter: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+  fb: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>',
+  ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/></svg>',
+  reddit: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.715 9.207c.4 0 .753.142 1.034.367.555-.39 1.317-.642 2.165-.667l.367-1.733c0-.092.057-.183.11-.225.054-.04.142-.04.225 0l1.225.275c.367-.275.808-.458 1.275-.458.92 0 1.667.733 1.667 1.65s-.747 1.65-1.667 1.65c-.842 0-1.55-.633-1.65-1.483l-1.1-.275-.317 1.55c.842.05 1.617.305 2.167.692.275-.226.625-.367 1.025-.367.92 0 1.667.733 1.667 1.65s-.747 1.65-1.667 1.65c-.625 0-1.158-.358-1.392-.875-.467.358-1.158.617-1.992.692.083.275.142.567.142.867 0 1.892-2.317 3.425-5.167 3.425-2.85 0-5.167-1.533-5.167-3.425 0-.3.058-.592.142-.867-.833-.075-1.525-.333-1.992-.692-.233.517-.767.875-1.392.875-.92 0-1.667-.733-1.667-1.65s.747-1.65 1.667-1.65c.4 0 .75.141 1.025.367.55-.387 1.325-.642 2.167-.692l-.317-1.55-1.1.275c-.1.85-.808 1.483-1.65 1.483-.92 0-1.667-.733-1.667-1.65s.747-1.65 1.667-1.65c.467 0 .908.183 1.275.458l1.225-.275c.083-.04.171-.04.225 0 .054.042.11.133.11.225l.367 1.733c.85.025 1.61.275 2.165.667.282-.225.635-.367 1.034-.367z" transform="scale(0.8)"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>',
+  arrowRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+  chevronRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  filter: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+  zap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  trash2: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>',
+};
+const svg = (name, size=14) => {
+  const raw = ICO[name] || '';
+  const attrMatch = raw.match(/<svg([^>]*)>/);
+  const origAttrs = attrMatch ? attrMatch[1].replace(/\s*(viewBox|width|height)="[^"]*"/g, '') : '';
+  const inner = (raw.match(/<svg[^>]*>([\s\S]*)<\/svg>/) || [,''])[1];
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"${origAttrs} style="display:inline-block;vertical-align:middle;flex-shrink:0">${inner}</svg>`;
+};
+
+/*═══════════════════════════════════════════════════════════════
+  MOCK DATA
+═══════════════════════════════════════════════════════════════*/
+const NOW = new Date('2026-05-05T21:30:00');
+const DAY = 24*60*60*1000, HOUR = 60*60*1000, MIN = 60*1000;
+
+const TOPICS = [
+  { id:'t1', name:'Nike Ukraine', icon:'#', watchers:['Kateryna P.','Andrii M.','Olena S.','Dmytro V.'], color:'#f97316' },
+  { id:'t2', name:'Nike Global', icon:'#', watchers:['Kateryna P.','Andrii M.','Sofia R.','Marta L.','Pavlo K.','Inna T.'], color:'#0ea5e9' },
+  { id:'t3', name:'Adidas comparison', icon:'#', watchers:['Kateryna P.','Sofia R.'], color:'#84cc16' },
+  { id:'t4', name:'Holiday campaign', icon:'#', watchers:['Kateryna P.','Marta L.','Andrii M.'], color:'#a855f7' },
+];
+const TOPIC = id => TOPICS.find(t=>t.id===id);
+
+const RULES = [
+  { id:'r1', name:'Brand Reputation Crisis', topicId:'t1', severity:'critical',
+    conditions:{ sentiment:'negative', platform:'Twitter/X', authorTier:'medium-or-higher', keywords:'' },
+    threshold:{ count:3, window:1, unit:'hour' }, recipients:'topic-watchers',
+    fired7d:4, fired30d:14, muteRate:38, lastFired: NOW - 16*MIN, createdBy:'Kateryna P.', createdAt: NOW - 12*DAY },
+  { id:'r2', name:'Journalist mention spike', topicId:'t2', severity:'important',
+    conditions:{ sentiment:'any', platform:'Twitter/X', authorTier:'high', keywords:'' },
+    threshold:{ count:2, window:30, unit:'minutes' }, recipients:'topic-watchers',
+    fired7d:1, fired30d:3, muteRate:0, lastFired: NOW - 2*HOUR - 28*MIN, createdBy:'Kateryna P.', createdAt: NOW - 18*DAY },
+  { id:'r3', name:'Negative sentiment drift', topicId:'t1', severity:'info',
+    conditions:{ sentiment:'negative', platform:'any', authorTier:'any', keywords:'' },
+    threshold:{ count:10, window:6, unit:'hours' }, recipients:'topic-watchers',
+    fired7d:2, fired30d:7, muteRate:14, lastFired: NOW - 1*DAY - 6*HOUR, createdBy:'Andrii M.', createdAt: NOW - 22*DAY },
+  { id:'r4', name:'Influencer mention', topicId:'t2', severity:'important',
+    conditions:{ sentiment:'positive', platform:'Instagram', authorTier:'high', keywords:'' },
+    threshold:{ count:1, window:1, unit:'hour' }, recipients:'topic-watchers',
+    fired7d:3, fired30d:9, muteRate:11, lastFired: NOW - 3*HOUR - 12*MIN, createdBy:'Marta L.', createdAt: NOW - 8*DAY },
+  { id:'r5', name:'Competitor share-of-voice spike', topicId:'t3', severity:'info',
+    conditions:{ sentiment:'any', platform:'any', authorTier:'any', keywords:'Adidas' },
+    threshold:{ count:25, window:1, unit:'day' }, recipients:'topic-watchers',
+    fired7d:1, fired30d:4, muteRate:25, lastFired: NOW - 2*DAY - 4*HOUR, createdBy:'Sofia R.', createdAt: NOW - 30*DAY },
+  { id:'r6', name:'Holiday campaign mentions', topicId:'t4', severity:'info',
+    conditions:{ sentiment:'any', platform:'any', authorTier:'any', keywords:'#NikeHoliday' },
+    threshold:{ count:5, window:1, unit:'hour' }, recipients:'topic-watchers',
+    fired7d:6, fired30d:18, muteRate:55, lastFired: NOW - 4*HOUR, createdBy:'Marta L.', createdAt: NOW - 5*DAY },
+  { id:'r7', name:'Crisis word watchlist', topicId:'t1', severity:'critical',
+    conditions:{ sentiment:'any', platform:'any', authorTier:'any', keywords:'boycott, scandal, lawsuit' },
+    threshold:{ count:2, window:1, unit:'hour' }, recipients:'topic-watchers',
+    fired7d:0, fired30d:1, muteRate:0, lastFired: NOW - 8*DAY, createdBy:'Kateryna P.', createdAt: NOW - 14*DAY },
+  { id:'r8', name:'Weekly digest trigger', topicId:'t2', severity:'info',
+    conditions:{ sentiment:'any', platform:'any', authorTier:'any', keywords:'' },
+    threshold:{ count:100, window:7, unit:'days' }, recipients:'topic-watchers',
+    fired7d:0, fired30d:0, muteRate:0, lastFired: null, createdBy:'Andrii M.', createdAt: NOW - 4*DAY },
+];
+const RULE = id => RULES.find(r=>r.id===id);
+
+const AUTHORS = [
+  { handle:'@user_journalist', name:'Olha Voronova', avatarColor:'#dc2626', initials:'OV', tier:'high', verified:true, platform:'Twitter/X', followers:48200, role:'Tech reporter, Forbes UA' },
+  { handle:'@media_pro_ua', name:'Andrii Kostenko', avatarColor:'#059669', initials:'AK', tier:'high', verified:true, platform:'Twitter/X', followers:23100, role:'Senior editor, Liga.net' },
+  { handle:'@news_kyiv', name:'Kyiv Post', avatarColor:'#0ea5e9', initials:'KP', tier:'high', verified:true, platform:'Twitter/X', followers:142000, role:'News outlet' },
+  { handle:'@sportsdaily', name:'Sports Daily UA', avatarColor:'#7c3aed', initials:'SD', tier:'high', verified:true, platform:'Twitter/X', followers:89400, role:'Sports media' },
+  { handle:'@m.kovalenko', name:'Mariya Kovalenko', avatarColor:'#0891b2', initials:'MK', tier:'medium', verified:false, platform:'Instagram', followers:18400, role:'Lifestyle blogger' },
+  { handle:'@runner_dnipro', name:'Pavlo Tkachenko', avatarColor:'#65a30d', initials:'PT', tier:'medium', verified:false, platform:'Instagram', followers:32800, role:'Athlete · runner' },
+  { handle:'@maks.yev', name:'Maksym Yevtushenko', avatarColor:'#ea580c', initials:'MY', tier:'low', verified:false, platform:'Twitter/X', followers:1240, role:'Football fan' },
+  { handle:'@li.community', name:'Lviv Community', avatarColor:'#9333ea', initials:'LC', tier:'medium', verified:false, platform:'Facebook', followers:5800, role:'Community group' },
+  { handle:'@ole_blog', name:'Olena Maksymchuk', avatarColor:'#db2777', initials:'OM', tier:'medium', verified:false, platform:'Twitter/X', followers:9100, role:'Marketing consultant' },
+  { handle:'@daniel_brand', name:'Daniel Brand-Watch', avatarColor:'#0d9488', initials:'DB', tier:'high', verified:true, platform:'LinkedIn', followers:21000, role:'Brand strategist' },
+];
+const AUTHOR_BY_HANDLE = h => AUTHORS.find(a=>a.handle===h);
+
+const MENTION_BANK = {
+  crisis: [
+    { author:'@user_journalist', text:'Disappointed with <m>Nike\'s</m> response to the supply chain controversy. This is exactly the kind of <m>negative</m> PR they don\'t need right now. #NikeControversy', engagement:{ rt:2147, lk:8.4, rep:312 } },
+    { author:'@media_pro_ua', text:'Multiple sources confirming <m>Nike Ukraine</m> delayed shipments again. The brand\'s silence is making things worse. Story developing.', engagement:{ rt:847, lk:3.1, rep:178 } },
+    { author:'@news_kyiv', text:'Third consecutive <m>negative</m> story on <m>Nike</m> this week. Something\'s brewing — full report linked.', engagement:{ rt:1205, lk:4.8, rep:240 } },
+    { author:'@sportsdaily', text:'<m>Nike Ukraine</m> facing customer backlash over delayed orders. Several athletes voiced frustration publicly.', engagement:{ rt:512, lk:2.2, rep:89 } },
+    { author:'@maks.yev', text:'Yo @<m>Nike</m> where are the orders??? Two months waiting. <m>Negative</m> experience all the way.', engagement:{ rt:34, lk:.4, rep:12 } },
+  ],
+  journalist: [
+    { author:'@user_journalist', text:'Just got off a call about <m>Nike\'s</m> Q2 plans. Big shifts coming for the EMEA region — full piece tomorrow.', engagement:{ rt:412, lk:1.8, rep:45 } },
+    { author:'@media_pro_ua', text:'<m>Nike Global</m> announces new sustainability initiative. Verified internal memo seen by our team.', engagement:{ rt:298, lk:1.2, rep:38 } },
+    { author:'@daniel_brand', text:'Quick take on <m>Nike\'s</m> latest brand campaign — bold, but does the messaging land for non-US markets? Thread 🧵', engagement:{ rt:178, lk:.9, rep:62 } },
+  ],
+  influencer: [
+    { author:'@m.kovalenko', text:'New <m>Nike</m> Air drop and I am OBSESSED. Quality just keeps getting better 🔥 #NikeUkraine', engagement:{ rt:0, lk:14.2, rep:840 } },
+    { author:'@runner_dnipro', text:'Best running shoes I\'ve owned. <m>Nike</m> Pegasus 41 feels like nothing else. Thanks @<m>Nike</m>!', engagement:{ rt:0, lk:8.7, rep:412 } },
+  ],
+  drift: [
+    { author:'@ole_blog', text:'Used to recommend <m>Nike</m> to all my clients. Lately seeing more complaints than positive feedback. <m>Negative</m> trend?', engagement:{ rt:42, lk:.3, rep:28 } },
+    { author:'@li.community', text:'Fewer <m>Nike</m> sightings at recent Lviv events. Anyone else noticing the shift?', engagement:{ rt:18, lk:.2, rep:11 } },
+  ],
+  campaign: [
+    { author:'@m.kovalenko', text:'Loving the <m>#NikeHoliday</m> drop! Worth every hryvnia. ❤️', engagement:{ rt:0, lk:5.4, rep:280 } },
+    { author:'@runner_dnipro', text:'Got my <m>#NikeHoliday</m> kit today. Quality = top tier as always.', engagement:{ rt:0, lk:3.1, rep:124 } },
+    { author:'@ole_blog', text:'<m>#NikeHoliday</m> ad campaign is everywhere. Smart placement, strong creative.', engagement:{ rt:14, lk:.4, rep:9 } },
+  ],
+};
+
+let ALERTS_DATA = [
+  { id:'a1', ruleId:'r1', topicId:'t1', severity:'critical', firedAt: NOW - 16*MIN, status:'new',
+    matched:['Sentiment: negative','Platform: Twitter/X','Volume: >3 / hour','Author tier: medium+'],
+    matchCount:5, mentionsKey:'crisis', read:false },
+  { id:'a2', ruleId:'r2', topicId:'t2', severity:'important', firedAt: NOW - 2*HOUR - 28*MIN, status:'new',
+    matched:['Verified journalists: 3','Platform: Twitter/X','Window: 30 min'],
+    matchCount:3, mentionsKey:'journalist', read:false },
+  { id:'a3', ruleId:'r4', topicId:'t2', severity:'important', firedAt: NOW - 3*HOUR - 12*MIN, status:'new',
+    matched:['Author tier: high','Platform: Instagram','Sentiment: positive'],
+    matchCount:1, mentionsKey:'influencer', read:false },
+  { id:'a4', ruleId:'r6', topicId:'t4', severity:'info', firedAt: NOW - 4*HOUR, status:'new',
+    matched:['Keyword: #NikeHoliday','Volume: >5 / hour'],
+    matchCount:8, mentionsKey:'campaign', read:true },
+  { id:'a5', ruleId:'r1', topicId:'t1', severity:'critical', firedAt: NOW - 22*HOUR, status:'acknowledged',
+    matched:['Sentiment: negative','Platform: Twitter/X','Volume: >3 / hour'],
+    matchCount:7, mentionsKey:'crisis', read:true },
+  { id:'a6', ruleId:'r3', topicId:'t1', severity:'info', firedAt: NOW - 1*DAY - 6*HOUR, status:'new',
+    matched:['Sentiment shift: positive→negative','Volume: >10 / 6h'],
+    matchCount:12, mentionsKey:'drift', read:true },
+  { id:'a7', ruleId:'r6', topicId:'t4', severity:'info', firedAt: NOW - 1*DAY - 9*HOUR, status:'dismissed',
+    matched:['Keyword: #NikeHoliday','Volume: >5 / hour'],
+    matchCount:6, mentionsKey:'campaign', read:true },
+  { id:'a8', ruleId:'r5', topicId:'t3', severity:'info', firedAt: NOW - 2*DAY - 4*HOUR, status:'new',
+    matched:['Keyword: Adidas','Volume: >25 / day'],
+    matchCount:34, mentionsKey:'drift', read:true },
+  { id:'a9', ruleId:'r6', topicId:'t4', severity:'info', firedAt: NOW - 2*DAY - 11*HOUR, status:'dismissed',
+    matched:['Keyword: #NikeHoliday'],
+    matchCount:5, mentionsKey:'campaign', read:true },
+  { id:'a10', ruleId:'r1', topicId:'t1', severity:'important', firedAt: NOW - 3*DAY - 2*HOUR, status:'acknowledged',
+    matched:['Sentiment: negative','Volume: >3 / hour'],
+    matchCount:4, mentionsKey:'crisis', read:true },
+  { id:'a11', ruleId:'r3', topicId:'t1', severity:'info', firedAt: NOW - 4*DAY, status:'acknowledged',
+    matched:['Sentiment drift detected'],
+    matchCount:11, mentionsKey:'drift', read:true },
+  { id:'a12', ruleId:'r4', topicId:'t2', severity:'important', firedAt: NOW - 4*DAY - 8*HOUR, status:'acknowledged',
+    matched:['Author tier: high','Platform: Instagram'],
+    matchCount:1, mentionsKey:'influencer', read:true },
+];
+
+/*═══════════════════════════════════════════════════════════════
+  STATE
+═══════════════════════════════════════════════════════════════*/
+const state = {
+  route: { name:'inbox', params:{} },
+  selectedAlertId: null,
+  notifOpen: false,
+  cmdkOpen: false,
+  debugOpen: false,
+  inboxFilter: { status:'new', search:'', severity:null, topicId:null },
+  notifFilter: 'all',
+  ruleEditor: null,  // {ruleId|null, draft:{...}, mode:'page'|'panel'}
+  toasts: [],
+  // ephemera for forecast hover
+  forecastHover: { day:null, count:0 },
+};
+
+/*═══════════════════════════════════════════════════════════════
+  TIME UTILS
+═══════════════════════════════════════════════════════════════*/
+function timeAgo(ms) {
+  if (!ms) return 'Never';
+  const d = NOW - new Date(ms).getTime();
+  if (d < 60*MIN) return Math.max(1, Math.floor(d/MIN)) + ' min ago';
+  if (d < 24*HOUR) return Math.floor(d/HOUR) + 'h ago';
+  if (d < 2*DAY) return 'Yesterday';
+  if (d < 7*DAY) return Math.floor(d/DAY) + 'd ago';
+  const dt = new Date(ms);
+  return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function clockTime(ms) {
+  const d = new Date(ms); let h = d.getHours(); const m = d.getMinutes().toString().padStart(2,'0');
+  const ap = h>=12?'pm':'am'; h = h%12||12;
+  return `${h}:${m} ${ap}`;
+}
+function dayLabel(ms) {
+  const d = NOW - new Date(ms).getTime();
+  if (d < 24*HOUR) return 'Today';
+  if (d < 2*DAY) return 'Yesterday';
+  if (d < 7*DAY) return 'This week';
+  return 'Earlier';
+}
+
+/*═══════════════════════════════════════════════════════════════
+  FORECAST DATA GENERATOR
+═══════════════════════════════════════════════════════════════*/
+function generateForecast(rule) {
+  // 30 days of historical fire counts simulated from rule conditions
+  const seed = rule.id.charCodeAt(1) || 7;
+  const baseRate = (rule.threshold && rule.threshold.count <= 2) ? 4 : (rule.threshold?.count <= 5 ? 1.4 : 0.4);
+  const arr = [];
+  for (let i=0;i<30;i++) {
+    const noise = Math.sin((i+seed)*0.7) * 1.4 + Math.cos((i+seed)*0.3) * 1.1;
+    let v = Math.max(0, Math.round(baseRate + noise + (i===26||i===22?2:0) + (Math.random()*0.6-0.3)));
+    if (rule._tooLoose) v = 30 + Math.round(Math.sin(i*.4)*8 + Math.random()*10);
+    arr.push(v);
+  }
+  return arr;
+}
+function forecastTotal(arr) { return arr.reduce((a,b)=>a+b,0); }
+function forecastPerDay(arr) { return (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1); }
+
+/*═══════════════════════════════════════════════════════════════
+  RENDER — sidebar / topbar
+═══════════════════════════════════════════════════════════════*/
+function renderSidebar() {
+  const newCount = ALERTS_DATA.filter(a=>a.status==='new').length;
+  const nav = [
+    { section:'Workspace', items:[
+      { icon:'topic', label:'Topics', count:TOPICS.length, route:'topics' },
+      { icon:'analytics', label:'Analytics', route:'analytics' },
+      { icon:'reports', label:'Reports', route:'reports' },
+      { icon:'team', label:'Team', route:'team' },
+    ]},
+    { section:'Alerts', items:[
+      { icon:'alerts', label:'Alerts', count:newCount, route:'alerts', children:[
+        { label:'Inbox', route:'inbox', count: newCount },
+        { label:'Alert Rules', route:'rules', count: RULES.length },
+      ]},
+    ]},
+    { section:'Topics', items: TOPICS.map(t=>({ icon:'hash', label:t.name, route:`topic-${t.id}` })) },
+  ];
+
+  const html = nav.map(sec => `
+    <div class="nav-section">
+      <div class="nav-section-label"><span>${sec.section}</span><button class="add-btn" title="Add">${svg('plus',12)}</button></div>
+      ${sec.items.map(it => {
+        const isAlertsParent = it.route==='alerts';
+        const expanded = isAlertsParent;
+        const activeParent = (state.route.name==='inbox'||state.route.name==='rules'||state.route.name==='rule-editor'||state.route.name==='alert-detail') && it.route==='alerts';
+        return `
+          <div class="nav-item ${activeParent?'active':''}" data-route="${it.route}">
+            <span class="nav-icon">${svg(it.icon,15)}</span>
+            <span class="nav-item-label">${it.label}</span>
+            ${it.count!=null?`<span class="nav-count">${it.count}</span>`:''}
+          </div>
+          ${expanded && it.children ? `<div class="nav-children">
+            ${it.children.map(c=>`
+              <div class="nav-child ${state.route.name===c.route || (c.route==='inbox' && state.route.name==='alert-detail') || (c.route==='rules' && state.route.name==='rule-editor')?'active':''}" data-route="${c.route}">
+                <span>${c.label}</span>
+                ${c.count!=null?`<span class="nav-count">${c.count}</span>`:''}
+              </div>
+            `).join('')}
+          </div>` : ''}
+        `;
+      }).join('')}
+    </div>
+  `).join('');
+  $('#nav-scroll').innerHTML = html;
+  $('#nav-scroll').querySelectorAll('[data-route]').forEach(el=>{
+    el.onclick = ()=> navigate(el.dataset.route);
+  });
+}
+
+function renderTopbar() {
+  const trail = [];
+  const r = state.route.name;
+  if (r==='inbox') trail.push(['Alerts','alerts'],['Inbox','inbox',true]);
+  else if (r==='rules') trail.push(['Alerts','alerts'],['Alert Rules','rules',true]);
+  else if (r==='rule-editor') trail.push(['Alerts','alerts'],['Alert Rules','rules'],[state.ruleEditor?.ruleId ? RULE(state.ruleEditor.ruleId)?.name : 'New rule','rule-editor',true]);
+  else if (r==='alert-detail') {
+    const a = ALERTS_DATA.find(x=>x.id===state.selectedAlertId);
+    trail.push(['Alerts','alerts'],['Inbox','inbox'],[a ? RULE(a.ruleId)?.name : 'Alert','alert-detail',true]);
+  } else if (r==='topics') trail.push(['Topics','topics',true]);
+  else if (r==='analytics') trail.push(['Analytics','analytics',true]);
+  else if (r==='reports') trail.push(['Reports','reports',true]);
+  else if (r==='team') trail.push(['Team','team',true]);
+  else if (r.startsWith('topic-')) {
+    const t = TOPIC(r.slice(6));
+    trail.push(['Topics','topics'],[t?.name||'Topic',r,true]);
+  }
+
+  const html = trail.map((c,i)=>`
+    ${i>0?`<span class="crumb-sep">${svg('chevronRight',11)}</span>`:''}
+    <span class="crumb ${c[2]?'current':''}" data-route="${c[1]}">${c[0]}</span>
+  `).join('');
+  $('#crumbs').innerHTML = html;
+  $('#crumbs').querySelectorAll('[data-route]').forEach(el=>{
+    if (!el.classList.contains('current')) el.onclick = ()=> navigate(el.dataset.route);
+  });
+
+  // bell badge
+  const unread = ALERTS_DATA.filter(a=>!a.read).length;
+  const hasCritical = ALERTS_DATA.some(a=>a.severity==='critical' && a.status==='new' && !a.read);
+  const badge = $('#bell-badge'); const icon = $('#topbar .bell-icon');
+  if (unread>0) {
+    badge.style.display='flex';
+    badge.textContent = hasCritical ? '!' : (unread>9?'9+':unread);
+    badge.classList.toggle('critical', hasCritical);
+    icon.classList.toggle('critical', hasCritical);
+  } else {
+    badge.style.display='none';
+    icon.classList.remove('critical');
+  }
+}
+
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+const el = (tag, attrs={}, ...children) => {
+  const e = document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v])=>{ if (k==='class') e.className=v; else if (k.startsWith('on')) e[k.toLowerCase()]=v; else e.setAttribute(k,v); });
+  children.flat().forEach(c=>{ if (c==null) return; e.appendChild(typeof c==='string'?document.createTextNode(c):c); });
+  return e;
+};
+
+function navigate(route, params={}) {
+  if (route === 'rule-editor-new') {
+    state.ruleEditor = { ruleId:null, draft: blankRuleDraft(), mode:'page', step:'preset' };
+    state.route = { name:'rule-editor', params };
+  } else if (route.startsWith('rule-editor-')) {
+    const rid = route.replace('rule-editor-','');
+    state.ruleEditor = { ruleId: rid, draft: ruleToDraft(RULE(rid)), mode:'page', step:'form' };
+    state.route = { name:'rule-editor', params:{ ruleId:rid } };
+  } else if (route.startsWith('topic-') || ['topics','analytics','reports','team','rules','inbox','alerts'].includes(route)) {
+    const r = (route==='alerts') ? 'inbox' : route;
+    state.route = { name: r, params };
+    state.selectedAlertId = null;
+  }
+  renderAll();
+}
+
+function renderAll() {
+  renderSidebar();
+  renderTopbar();
+  renderView();
+  renderNotif();
+  renderDebug();
+}
+
+/*═══════════════════════════════════════════════════════════════
+  VIEW RENDERER (route → view fn)
+═══════════════════════════════════════════════════════════════*/
+function renderView() {
+  const v = $('#view'); v.innerHTML = '';
+  const r = state.route.name;
+  if (r==='inbox' || r==='alert-detail') v.appendChild(viewInbox());
+  else if (r==='rules') v.appendChild(viewRules());
+  else if (r==='rule-editor') v.appendChild(viewRuleEditor());
+  else if (r==='topics' || r.startsWith('topic-')) v.appendChild(viewPlaceholder('Topics','Mention streams, filters, and saved searches live here.'));
+  else if (r==='analytics') v.appendChild(viewPlaceholder('Analytics','Topic-level dashboards and trend reports.'));
+  else if (r==='reports') v.appendChild(viewPlaceholder('Reports','Scheduled and ad-hoc reports.'));
+  else if (r==='team') v.appendChild(viewPlaceholder('Team','Workspace members and roles.'));
+}
+
+function viewPlaceholder(title, body) {
+  const wrap = el('div', { class:'list-pane', style:'flex:1' });
+  wrap.innerHTML = `
+    <div class="list-header"><div class="list-title-row"><div class="list-title">${title}</div></div></div>
+    <div class="empty" style="margin:auto">
+      <div class="empty-icon">${svg('layers',22)}</div>
+      <div class="empty-title">${title}</div>
+      <div class="empty-body">${body} This area is intentionally minimal — the prototype focuses on the Alerts experience.</div>
+      <button class="btn btn-secondary btn-sm" onclick="navigate('inbox')">${svg('arrowRight',13)} Go to Alerts</button>
+    </div>`;
+  return wrap;
+}
+
+/*═══════════════════════════════════════════════════════════════
+  VIEW: Alerts inbox (+ detail pane when selected)
+═══════════════════════════════════════════════════════════════*/
+function viewInbox() {
+  const wrap = document.createDocumentFragment();
+  // List pane
+  const listPane = el('div',{class:'list-pane'});
+
+  // Filter the alerts
+  const f = state.inboxFilter;
+  let filtered = ALERTS_DATA.filter(a=>a.status===f.status);
+  if (f.severity) filtered = filtered.filter(a=>a.severity===f.severity);
+  if (f.topicId) filtered = filtered.filter(a=>a.topicId===f.topicId);
+  if (f.search.trim()) {
+    const q = f.search.trim().toLowerCase();
+    filtered = filtered.filter(a=>{
+      const r = RULE(a.ruleId), t = TOPIC(a.topicId);
+      return (r?.name||'').toLowerCase().includes(q) || (t?.name||'').toLowerCase().includes(q);
+    });
+  }
+  // Sort: severity desc, then time desc
+  const sevRank = { critical:3, important:2, info:1 };
+  filtered.sort((a,b)=> (sevRank[b.severity]-sevRank[a.severity]) || (b.firedAt-a.firedAt));
+
+  const counts = {
+    new: ALERTS_DATA.filter(a=>a.status==='new').length,
+    acknowledged: ALERTS_DATA.filter(a=>a.status==='acknowledged').length,
+    dismissed: ALERTS_DATA.filter(a=>a.status==='dismissed').length,
+  };
+
+  const header = el('div',{class:'list-header'});
+  header.innerHTML = `
+    <div class="list-title-row">
+      <div class="list-title">Inbox</div>
+      <span class="list-count">${ALERTS_DATA.filter(a=>a.status==='new').length} unread</span>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost btn-sm" id="refresh-btn" title="Refresh">${svg('refresh',13)}</button>
+    </div>
+    <div class="tabs">
+      <div class="tab ${f.status==='new'?'active':''}" data-status="new">New <span class="tab-count">${counts.new}</span></div>
+      <div class="tab ${f.status==='acknowledged'?'active':''}" data-status="acknowledged">Acknowledged <span class="tab-count">${counts.acknowledged}</span></div>
+      <div class="tab ${f.status==='dismissed'?'active':''}" data-status="dismissed">Dismissed <span class="tab-count">${counts.dismissed}</span></div>
+    </div>
+    <div class="list-toolbar">
+      <div class="list-search">
+        ${svg('search',12)}
+        <input type="text" placeholder="Search alerts…" id="inbox-search" value="${f.search}" />
+      </div>
+      <div class="filter-row">
+        ${['critical','important','info'].map(s=>`
+          <span class="filter-pill ${f.severity===s?'active':''}" data-sev="${s}">
+            <span class="pill-dot" style="background:var(--${s})"></span>${s.charAt(0).toUpperCase()+s.slice(1)}
+          </span>
+        `).join('')}
+        ${f.topicId ? `<span class="filter-pill active" data-topic-clear>${TOPIC(f.topicId)?.name} <span class="pill-x">×</span></span>` : ''}
+      </div>
+    </div>`;
+  listPane.appendChild(header);
+
+  const body = el('div',{class:'list-body'});
+  if (filtered.length === 0) {
+    body.innerHTML = `<div class="empty"><div class="empty-icon">${svg('inbox',22)}</div>
+      <div class="empty-title">${f.status==='new'?'No new alerts':f.status==='acknowledged'?'Nothing acknowledged':'Nothing dismissed'}</div>
+      <div class="empty-body">${f.status==='new'?'Your rules are running. New alerts will appear here.':'Items in this tab will show as you triage.'}</div>
+      ${f.status==='new'?`<button class="btn btn-secondary btn-sm" onclick="navigate('rules')">View Alert Rules</button>`:''}
+    </div>`;
+  } else {
+    let lastDay = null;
+    filtered.forEach(a=>{
+      const d = dayLabel(a.firedAt);
+      if (d !== lastDay) { lastDay = d; body.appendChild(el('div',{class:'list-section'},d)); }
+      body.appendChild(alertRow(a));
+    });
+  }
+  listPane.appendChild(body);
+
+  // Bind events
+  setTimeout(()=>{
+    header.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ state.inboxFilter.status = t.dataset.status; renderView(); });
+    header.querySelectorAll('[data-sev]').forEach(p=>p.onclick=()=>{
+      state.inboxFilter.severity = state.inboxFilter.severity===p.dataset.sev ? null : p.dataset.sev;
+      renderView();
+    });
+    const tc = header.querySelector('[data-topic-clear]'); if (tc) tc.onclick=()=>{ state.inboxFilter.topicId=null; renderView(); };
+    const search = header.querySelector('#inbox-search');
+    let timer; search.oninput=()=>{ clearTimeout(timer); timer=setTimeout(()=>{ state.inboxFilter.search = search.value; renderView(); search?.focus(); }, 180); };
+    header.querySelector('#refresh-btn').onclick = ()=>{
+      const btn = header.querySelector('#refresh-btn');
+      btn.innerHTML = `<div class="spinner"></div>`;
+      setTimeout(()=>{ btn.innerHTML = svg('refresh',13); toast('Inbox up to date'); }, 600);
+    };
+  },0);
+
+  const container = el('div',{style:'flex:1;display:flex;overflow:hidden;width:100%'});
+  container.appendChild(listPane);
+
+  // Detail pane if alert selected
+  if (state.selectedAlertId) {
+    const a = ALERTS_DATA.find(x=>x.id===state.selectedAlertId);
+    if (a) container.appendChild(detailPane(a));
+  }
+
+  wrap.appendChild(container);
+  return container;
+}
+
+function alertRow(a) {
+  const r = RULE(a.ruleId), t = TOPIC(a.topicId);
+  const isSel = a.id === state.selectedAlertId;
+  const row = el('div',{class:`alert-row ${isSel?'selected':''} ${a.read?'read':''}`, 'data-id':a.id});
+  row.innerHTML = `
+    <div class="alert-bar bar-${a.severity}"></div>
+    <div class="unread-indicator"></div>
+    <div class="alert-main">
+      <div class="alert-title-row">
+        <span class="alert-title">${r?.name||'Unknown rule'}</span>
+        <span class="alert-time">${timeAgo(a.firedAt)}</span>
+      </div>
+      <div class="alert-meta">
+        <span class="sev ${a.severity}"><span class="sev-dot"></span>${a.severity}</span>
+        <span class="dot-sep">•</span>
+        <span>${t?.name||'—'}</span>
+        <span class="dot-sep">•</span>
+        <span class="meta-summary">${a.matchCount} mentions matched</span>
+      </div>
+    </div>
+    <div class="alert-actions">
+      <button class="row-action" data-act="mute" title="Mute rule">${svg('mute',14)}</button>
+      <button class="row-action" data-act="dismiss" title="Dismiss">${svg('close',14)}</button>
+    </div>`;
+  row.onclick = (e)=>{
+    if (e.target.closest('[data-act]')) return;
+    state.selectedAlertId = a.id;
+    a.read = true;
+    state.route.name = 'alert-detail';
+    renderAll();
+  };
+  row.querySelector('[data-act="mute"]').onclick = (e)=>{ e.stopPropagation(); muteAlert(a.id); };
+  row.querySelector('[data-act="dismiss"]').onclick = (e)=>{ e.stopPropagation(); dismissAlert(a.id); };
+  return row;
+}
+
+/*═══════════════════════════════════════════════════════════════
+  DETAIL PANE
+═══════════════════════════════════════════════════════════════*/
+function detailPane(a) {
+  const r = RULE(a.ruleId), t = TOPIC(a.topicId);
+  const mentions = MENTION_BANK[a.mentionsKey] || [];
+  const pane = el('div',{class:'detail-pane'});
+  pane.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-top">
+        <div class="detail-meta">
+          <span class="sev ${a.severity}"><span class="sev-dot"></span>${a.severity}</span>
+          <span class="dot-sep">•</span>
+          <span>Fired at ${clockTime(a.firedAt)} · ${timeAgo(a.firedAt)}</span>
+        </div>
+        <button class="icon-btn" id="close-detail" title="Close">${svg('close',14)}</button>
+      </div>
+      <div class="detail-title">${r?.name||''}</div>
+      <div class="detail-sublink">
+        <span>Rule: <a href="#" data-edit-rule>${r?.name}</a></span>
+        <span class="dot-sep">•</span>
+        <span>Topic: <a href="#" data-topic="${t?.id}">${t?.name}</a></span>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-section">
+        <div class="condition-banner ${a.severity}">
+          <span class="condition-banner-icon">${svg('alertTri',16)}</span>
+          <div>${conditionSentence(a, r)}</div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-label">Matched conditions</div>
+        <div class="chips">${a.matched.map(m=>{
+          const [k,v] = m.split(':').map(s=>s.trim());
+          return `<span class="chip"><span class="chip-key">${k}:</span>${v||''}</span>`;
+        }).join('')}</div>
+      </div>
+      <div class="detail-section">
+        <div class="section-label" style="display:flex;align-items:center;justify-content:space-between">
+          <span>Sample mentions <span style="color:var(--text-3);font-weight:400">(${a.matchCount})</span></span>
+          <a href="#" style="font-size:11px;text-transform:none;letter-spacing:0;font-weight:500">View all ${svg('ext',10)}</a>
+        </div>
+        ${mentions.slice(0, a.severity==='critical'?3:2).map(m=>mentionCard(m)).join('')}
+      </div>
+      <div class="detail-section">
+        <div class="section-label">Recipients</div>
+        <div style="font-size:12px;color:var(--text-2)">${(t?.watchers||[]).slice(0,3).join(', ')}${(t?.watchers||[]).length>3?` +${t.watchers.length-3} more`:''} · notified by in-product${a.severity==='critical'?' + email':''}</div>
+      </div>
+    </div>
+    <div class="detail-footer">
+      <button class="btn btn-primary btn-sm" id="ack-btn" ${a.status==='acknowledged'?'disabled':''}>${svg('check',13)} ${a.status==='acknowledged'?'Acknowledged':'Acknowledge'}</button>
+      <button class="btn btn-secondary btn-sm" id="mute-btn">${svg('mute',13)} Mute</button>
+      <button class="btn btn-ghost btn-sm" id="dismiss-btn">Dismiss</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-secondary btn-sm" id="edit-rule-btn">${svg('edit',13)} Edit rule</button>
+    </div>`;
+
+  setTimeout(()=>{
+    pane.querySelector('#close-detail').onclick = ()=>{
+      state.selectedAlertId = null;
+      state.route.name = 'inbox';
+      renderAll();
+    };
+    pane.querySelector('#ack-btn').onclick = ()=>{
+      a.status = 'acknowledged'; a.read = true;
+      toast('Alert acknowledged');
+      renderAll();
+    };
+    pane.querySelector('#mute-btn').onclick = ()=> muteAlert(a.id);
+    pane.querySelector('#dismiss-btn').onclick = ()=> dismissAlert(a.id);
+    const editBtn = pane.querySelector('#edit-rule-btn');
+    const editLink = pane.querySelector('[data-edit-rule]');
+    [editBtn, editLink].forEach(b=>{ if (b) b.onclick=(e)=>{ e.preventDefault(); openEditFromAlert(a, pane); }; });
+  },0);
+  return pane;
+}
+
+function conditionSentence(a, r) {
+  if (a.severity==='critical') return `${a.matchCount} ${r.conditions.sentiment!=='any'?r.conditions.sentiment+' ':''}mentions in ${r.threshold.window} ${r.threshold.unit} exceeded your threshold of ${r.threshold.count}`;
+  if (a.severity==='important') return `${a.matchCount} matched mention${a.matchCount>1?'s':''} from ${r.conditions.authorTier==='high'?'verified high-tier authors':'authors above your tier filter'}`;
+  return `${a.matchCount} matched mentions in the last ${r.threshold.window} ${r.threshold.unit}`;
+}
+
+function mentionCard(m) {
+  const a = AUTHOR_BY_HANDLE(m.author);
+  const text = m.text.replace(/<m>/g,'<mark>').replace(/<\/m>/g,'</mark>');
+  return `
+    <div class="mention-card">
+      <div class="mention-head">
+        <div class="mention-avatar" style="background:linear-gradient(135deg,${a.avatarColor},${a.avatarColor}cc)">${a.initials}</div>
+        <div style="flex:1;min-width:0">
+          <div class="mention-author">${a.name} <span style="color:var(--text-3);font-weight:400">${a.handle}</span></div>
+          <div class="mention-platform">
+            ${a.platform==='Twitter/X'?svg('twitter',11):a.platform==='Instagram'?svg('ig',11):a.platform==='Facebook'?svg('fb',11):svg('globe',11)}
+            ${a.platform} · ${a.role}${a.verified?` <span class="verified-badge" title="Verified">${svg('check',10)}</span>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="mention-text">${text}</div>
+      <div class="mention-foot">
+        <span class="mention-stat">${(m.engagement.rt||0).toLocaleString()} retweets</span>
+        <span class="dot-sep">•</span>
+        <span class="mention-stat">${(m.engagement.lk*1000).toLocaleString().replace(/,000$/,'k').replace(/(\d+)000$/,'$1k')} likes</span>
+        <span class="dot-sep">•</span>
+        <span class="mention-stat">${m.engagement.rep} replies</span>
+      </div>
+    </div>`;
+}
+
+/*═══════════════════════════════════════════════════════════════
+  EDIT-FROM-ALERT (slide-in editor panel over detail)
+═══════════════════════════════════════════════════════════════*/
+function openEditFromAlert(a, parentPane) {
+  const r = RULE(a.ruleId);
+  state.ruleEditor = { ruleId: r.id, draft: ruleToDraft(r), mode:'panel', step:'form' };
+
+  // Widen the detail pane so alert content stays visible alongside the editor
+  parentPane.classList.add('with-editor');
+  parentPane.style.position = 'relative';
+  const existing = parentPane.querySelector('.editor-panel');
+  if (existing) existing.remove();
+
+  const panel = el('div',{class:'editor-panel'});
+  panel.innerHTML = ruleEditorPanelHTML();
+  parentPane.appendChild(panel);
+  requestAnimationFrame(()=>panel.classList.add('open'));
+
+  bindRuleEditor(panel, true, ()=>{
+    panel.classList.remove('open');
+    setTimeout(()=>{
+      panel.remove();
+      parentPane.classList.remove('with-editor');
+    },200);
+    state.ruleEditor = null;
+  });
+}
+
+/*═══════════════════════════════════════════════════════════════
+  VIEW: Alert Rules list
+═══════════════════════════════════════════════════════════════*/
+function viewRules() {
+  const wrap = el('div',{class:'list-pane', style:'flex:1'});
+  wrap.innerHTML = `
+    <div class="list-header">
+      <div class="list-title-row">
+        <div class="list-title">Alert Rules</div>
+        <span class="list-count">${RULES.length} rules</span>
+        <div style="flex:1"></div>
+        <button class="btn btn-primary btn-sm" id="new-rule-btn">${svg('plus',13)} New rule</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-pill active">All rules</span>
+        <span class="filter-pill">My rules</span>
+        <span class="filter-pill">High mute rate</span>
+        <span class="filter-pill">Inactive</span>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="rules-tbl">
+        <thead>
+          <tr>
+            <th style="width:30%">Rule</th>
+            <th>Topic</th>
+            <th class="num">Fired 7d</th>
+            <th class="num">Fired 30d</th>
+            <th class="num">Mute rate</th>
+            <th>Last fired</th>
+            <th>Created by</th>
+            <th class="row-actions-cell"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${RULES.map(r=>{
+            const t = TOPIC(r.topicId);
+            const zero = r.fired30d===0;
+            const muteCls = r.muteRate>=30?'health-warn':(r.muteRate>=50?'health-crit':'');
+            const fired7Cls = r.fired7d>=4?'health-crit':r.fired7d>=2?'health-warn':'';
+            return `
+              <tr class="${zero?'zero-fire':''}" data-rule="${r.id}">
+                <td>
+                  <div class="rule-cell">
+                    <div class="rule-bar bar-${r.severity}"></div>
+                    <div>
+                      <div style="font-weight:500">${r.name}</div>
+                      <div style="font-size:11px;color:var(--text-3);margin-top:1px">${r.threshold.count}+ mentions / ${r.threshold.window} ${r.threshold.unit}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="color:var(--text-2)">${t?.name||'—'}</td>
+                <td class="num ${fired7Cls}">${r.fired7d}</td>
+                <td class="num">${r.fired30d}</td>
+                <td class="num ${muteCls}">${r.fired30d===0?'—':r.muteRate+'%'}</td>
+                <td style="color:var(--text-2)">${timeAgo(r.lastFired)}</td>
+                <td style="color:var(--text-2)">${r.createdBy}</td>
+                <td class="row-actions-cell">
+                  <div class="actions">
+                    <button class="row-action" data-act="view" title="View alerts">${svg('inbox',13)}</button>
+                    <button class="row-action" data-act="edit" title="Edit">${svg('edit',13)}</button>
+                    <button class="row-action" data-act="delete" title="Delete">${svg('trash2',13)}</button>
+                  </div>
+                </td>
+              </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  setTimeout(()=>{
+    wrap.querySelector('#new-rule-btn').onclick = ()=>navigate('rule-editor-new');
+    wrap.querySelectorAll('tr[data-rule]').forEach(tr=>{
+      const rid = tr.dataset.rule;
+      tr.onclick = (e)=>{
+        if (e.target.closest('[data-act]')) return;
+        navigate(`rule-editor-${rid}`);
+      };
+      tr.querySelector('[data-act="view"]').onclick=(e)=>{
+        e.stopPropagation();
+        state.inboxFilter.search = RULE(rid).name;
+        navigate('inbox');
+      };
+      tr.querySelector('[data-act="edit"]').onclick=(e)=>{e.stopPropagation();navigate(`rule-editor-${rid}`);};
+      tr.querySelector('[data-act="delete"]').onclick=(e)=>{
+        e.stopPropagation();
+        const idx = RULES.findIndex(r=>r.id===rid);
+        const removed = RULES.splice(idx,1)[0];
+        toast(`Rule "${removed.name}" deleted`, { action:'Undo', onAction:()=>{ RULES.splice(idx,0,removed); renderAll(); }});
+        renderAll();
+      };
+    });
+  },0);
+  return wrap;
+}
+
+/*═══════════════════════════════════════════════════════════════
+  VIEW: Rule editor (full-page)
+═══════════════════════════════════════════════════════════════*/
+function blankRuleDraft() {
+  return { name:'', topicId:'t1', severity:'info',
+    conditions:{ sentiment:'any', platform:'any', authorTier:'any', keywords:'' },
+    threshold:{ count:5, window:1, unit:'hour' }, recipients:'topic-watchers' };
+}
+function ruleToDraft(r) { return JSON.parse(JSON.stringify(r)); }
+function presetDraft(p) {
+  const presets = {
+    pr: { name:'Brand Reputation Crisis', severity:'critical',
+      conditions:{ sentiment:'negative', platform:'Twitter/X', authorTier:'medium-or-higher', keywords:'' },
+      threshold:{ count:3, window:1, unit:'hour' }, topicId:'t1', recipients:'topic-watchers' },
+    smm: { name:'Engagement Spike', severity:'important',
+      conditions:{ sentiment:'any', platform:'Instagram', authorTier:'any', keywords:'' },
+      threshold:{ count:50, window:1, unit:'hour' }, topicId:'t2', recipients:'topic-watchers' },
+    bm: { name:'Share-of-Voice Trend', severity:'info',
+      conditions:{ sentiment:'any', platform:'any', authorTier:'any', keywords:'Adidas' },
+      threshold:{ count:25, window:1, unit:'day' }, topicId:'t3', recipients:'topic-watchers' },
+    custom: blankRuleDraft(),
+  };
+  return presets[p];
+}
+
+function viewRuleEditor() {
+  if (!state.ruleEditor) state.ruleEditor = { ruleId:null, draft: blankRuleDraft(), mode:'page', step:'preset' };
+  const ed = state.ruleEditor;
+  const wrap = el('div',{style:'flex:1;display:flex;flex-direction:column;overflow:hidden'});
+  // Top action bar (page mode only)
+  const bar = el('div',{class:'list-header', style:'padding:12px 24px;flex-direction:row;align-items:center;gap:12px'});
+  bar.innerHTML = `
+    <div style="flex:1;display:flex;align-items:center;gap:10px">
+      <button class="btn btn-ghost btn-sm" id="cancel-rule">${svg('close',13)} Cancel</button>
+      <span class="crumb-sep">${svg('chevronRight',11)}</span>
+      <span class="list-title" style="font-size:15px">${ed.ruleId ? RULE(ed.ruleId).name : (ed.draft.name||'New rule')}</span>
+    </div>
+    <button class="btn btn-secondary btn-sm" id="discard-rule">Discard</button>
+    <button class="btn btn-primary btn-sm" id="save-rule">${svg('check',13)} Save rule</button>`;
+  wrap.appendChild(bar);
+
+  if (ed.step === 'preset') {
+    const presetView = el('div',{class:'tbl-wrap',style:'background:var(--bg-card)'});
+    presetView.innerHTML = `
+      <div style="max-width:780px">
+        <div style="font-size:18px;font-weight:600;margin-bottom:6px">Choose a starting configuration</div>
+        <div style="font-size:13px;color:var(--text-2);margin-bottom:24px">All fields are editable after — presets are just sensible defaults for your role.</div>
+        <div class="preset-grid">
+          ${[
+            {k:'pr',  i:'flame',     n:'PR Specialist', d:'Crisis signals, journalist mentions, reputation alerts'},
+            {k:'smm', i:'bolt',      n:'SMM',           d:'Engagement spikes, viral content, sentiment shifts'},
+            {k:'bm',  i:'analytics', n:'Brand Manager', d:'Share of voice, trend detection, competitor signals'},
+            {k:'custom', i:'rules',  n:'Custom',        d:'Start from scratch with full control'}
+          ].map(p=>`
+            <div class="preset-card" data-preset="${p.k}">
+              <div class="preset-icon">${svg(p.i,16)}</div>
+              <div class="preset-name">${p.n}</div>
+              <div class="preset-desc">${p.d}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    wrap.appendChild(presetView);
+    setTimeout(()=>{
+      presetView.querySelectorAll('[data-preset]').forEach(c=>c.onclick=()=>{
+        state.ruleEditor.draft = presetDraft(c.dataset.preset);
+        state.ruleEditor.step = 'form';
+        renderView();
+      });
+    },0);
+  } else {
+    // Two-column form + chart
+    const form = el('div',{class:'rule-editor'});
+    form.innerHTML = ruleEditorBodyHTML();
+    wrap.appendChild(form);
+    setTimeout(()=>{
+      bindRuleEditor(form, false, null);
+    },0);
+  }
+
+  // Bind top bar
+  setTimeout(()=>{
+    bar.querySelector('#cancel-rule').onclick = ()=>navigate('rules');
+    bar.querySelector('#discard-rule').onclick = ()=>{
+      state.ruleEditor.draft = ed.ruleId ? ruleToDraft(RULE(ed.ruleId)) : blankRuleDraft();
+      state.ruleEditor.step = ed.ruleId ? 'form' : 'preset';
+      renderView();
+      toast('Changes discarded');
+    };
+    bar.querySelector('#save-rule').onclick = ()=>saveRule();
+  },0);
+
+  return wrap;
+}
+
+function ruleEditorBodyHTML() {
+  return `
+    <div class="rule-form">${ruleFormFieldsHTML()}</div>
+    <div class="rule-chart-side">${ruleForecastHTML()}</div>`;
+}
+function ruleEditorPanelHTML() {
+  return `
+    <div class="editor-panel-head">
+      <div>
+        <div class="ep-context">${svg('edit',11)} Editing rule</div>
+        <div class="ep-title">${state.ruleEditor.draft.name||'New rule'}</div>
+      </div>
+      <button class="icon-btn" data-act="close-editor">${svg('close',14)}</button>
+    </div>
+    <div class="editor-panel-body">
+      <div style="display:flex;flex-direction:column">
+        ${ruleFormFieldsHTML(true)}
+        <div class="editor-divider"></div>
+        ${ruleForecastHTML(true)}
+      </div>
+    </div>
+    <div class="editor-panel-foot">
+      <button class="btn btn-primary btn-sm" data-act="save-editor">${svg('check',13)} Save changes</button>
+      <button class="btn btn-ghost btn-sm" data-act="close-editor">Cancel</button>
+    </div>`;
+}
+
+function ruleFormFieldsHTML(compact=false) {
+  const d = state.ruleEditor.draft;
+  return `
+    ${!compact ? `
+    <div class="field">
+      <label class="field-label">Rule name</label>
+      <input class="field-input" data-f="name" value="${d.name||''}" placeholder="e.g. Brand Reputation Crisis" />
+    </div>
+    <div class="field">
+      <label class="field-label">Topic</label>
+      <div class="inline-select">
+        <select data-f="topicId">
+          ${TOPICS.map(t=>`<option value="${t.id}" ${d.topicId===t.id?'selected':''}>${t.name}</option>`).join('')}
+        </select>
+        ${svg('chevronRight',11)}
+      </div>
+    </div>` : ''}
+    <div class="field">
+      <label class="field-label">Conditions</label>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="field-row">
+          <span class="field-text">Sentiment is</span>
+          <div class="inline-select"><select data-f="conditions.sentiment">
+            ${['any','negative','positive','neutral'].map(v=>`<option value="${v}" ${d.conditions.sentiment===v?'selected':''}>${v}</option>`).join('')}
+          </select></div>
+        </div>
+        <div class="field-row">
+          <span class="field-text">Platform is</span>
+          <div class="inline-select"><select data-f="conditions.platform">
+            ${['any','Twitter/X','Instagram','Facebook','Reddit','LinkedIn','News'].map(v=>`<option value="${v}" ${d.conditions.platform===v?'selected':''}>${v}</option>`).join('')}
+          </select></div>
+        </div>
+        <div class="field-row">
+          <span class="field-text">Author tier is</span>
+          <div class="inline-select"><select data-f="conditions.authorTier">
+            ${[['any','any'],['low','low'],['medium-or-higher','medium or higher'],['high','high only']].map(([v,l])=>`<option value="${v}" ${d.conditions.authorTier===v?'selected':''}>${l}</option>`).join('')}
+          </select></div>
+        </div>
+        <div class="field-row">
+          <span class="field-text">Keywords contain</span>
+          <input class="field-input" style="max-width:240px;width:auto;flex:1;min-width:140px" data-f="conditions.keywords" value="${d.conditions.keywords||''}" placeholder="optional, comma-separated" />
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Threshold</label>
+      <div class="field-row">
+        <span class="field-text">Trigger when more than</span>
+        <input class="field-input inline-input" data-f="threshold.count" type="number" min="1" value="${d.threshold.count}" />
+        <span class="field-text">mentions in</span>
+        <input class="field-input inline-input" data-f="threshold.window" type="number" min="1" value="${d.threshold.window}" style="width:48px" />
+        <div class="inline-select"><select data-f="threshold.unit">
+          ${['minutes','hour','hours','day','days'].map(v=>`<option value="${v}" ${d.threshold.unit===v?'selected':''}>${v}</option>`).join('')}
+        </select></div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Severity</label>
+      <div class="field-row">
+        ${['info','important','critical'].map(s=>`
+          <span class="filter-pill ${d.severity===s?'active':''}" data-sev-set="${s}">
+            <span class="pill-dot" style="background:var(--${s})"></span>${s.charAt(0).toUpperCase()+s.slice(1)}
+          </span>
+        `).join('')}
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Recipients</label>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2)">
+        <span>${(TOPIC(d.topicId)?.watchers||[]).length} topic watcher${(TOPIC(d.topicId)?.watchers||[]).length===1?'':'s'} notified by default</span>
+        <button class="btn btn-ghost btn-sm" style="font-size:11.5px">Override ${svg('chevronRight',10)}</button>
+      </div>
+    </div>
+    <div class="summary-box" id="rule-summary-box">
+      <div class="summary-label">Rule summary</div>
+      <div class="summary-text" id="rule-summary-text">${ruleSummary(d)}</div>
+    </div>`;
+}
+
+function ruleSummary(d) {
+  const cs = [];
+  if (d.conditions.sentiment !== 'any') cs.push(`<em>${d.conditions.sentiment}</em>`);
+  cs.push('mentions');
+  if (d.conditions.platform !== 'any') cs.push(`on <em>${d.conditions.platform}</em>`);
+  if (d.conditions.authorTier !== 'any') cs.push(`from <em>${d.conditions.authorTier.replace(/-/g,' ')}</em> authors`);
+  if (d.conditions.keywords) cs.push(`mentioning <em>${d.conditions.keywords}</em>`);
+  const t = TOPIC(d.topicId)?.name || 'this topic';
+  return `Fire when ${cs.join(' ')} on <em>${t}</em> exceed <em>${d.threshold.count} per ${d.threshold.window} ${d.threshold.unit}</em>. Severity: <em>${d.severity}</em>.`;
+}
+
+function ruleForecastHTML(compact=false) {
+  const d = state.ruleEditor.draft;
+  const fakeRule = { ...d, _tooLoose: d.threshold.count <= 1 && d.conditions.sentiment === 'any' && d.conditions.platform === 'any' };
+  const data = generateForecast(fakeRule);
+  const total = forecastTotal(data);
+  const perDay = forecastPerDay(data);
+  const tooLoose = total > 200;
+  const max = Math.max(...data, 1);
+  const dayLabels = [];
+  for (let i=29;i>=0;i--) {
+    const dt = new Date(NOW - i*DAY);
+    dayLabels.push(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+  }
+  return `
+    <div class="fc-head">
+      <div class="fc-stat">
+        <div class="fc-stat-num">${total}</div>
+        <div class="fc-stat-label">Would have fired in last 30 days</div>
+      </div>
+      <div class="fc-meta">~${perDay} / day<br/>Updated ${compact?'just now':'live as you edit'}</div>
+    </div>
+    ${tooLoose?`
+      <div class="warn-strip">
+        <span class="warn-strip-icon">${svg('alertTri',14)}</span>
+        <div><strong>High fire rate.</strong> This configuration would fire ~${Math.round(perDay)} times per day. Consider raising the threshold or narrowing the filter.</div>
+      </div>`:''}
+    <div class="fc-chart" id="fc-chart">
+      <div class="fc-bars" id="fc-bars">
+        ${data.map((v,i)=>{
+          const h = v===0 ? 2 : Math.max(3, (v/max)*82);
+          const cls = tooLoose ? 'fc-bar warn' : 'fc-bar';
+          const z = v===0 ? ' zero' : '';
+          return `<div class="${cls}${z}" data-day="${dayLabels[i]}" data-count="${v}" style="height:${h}px"></div>`;
+        }).join('')}
+      </div>
+      <div class="fc-baseline"></div>
+      <div class="fc-axis"><span>${dayLabels[0]}</span><span>${dayLabels[10]}</span><span>${dayLabels[20]}</span><span>${dayLabels[29]}</span></div>
+    </div>
+    <div class="samples-box" id="samples-box" style="display:none">
+      <div class="samples-head"><div><span class="samples-day"></span> <span class="samples-sub"></span></div></div>
+      <div class="samples-content"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-3);margin-top:10px;line-height:1.5">Click any bar to see what would have fired that day. Forecast is based on the last 30 days of mention data.</div>`;
+}
+
+function bindRuleEditor(scope, isPanel, onClose) {
+  const update = (path, val) => {
+    const parts = path.split('.');
+    let obj = state.ruleEditor.draft;
+    for (let i=0;i<parts.length-1;i++) obj = obj[parts[i]];
+    obj[parts[parts.length-1]] = val;
+    refreshSummaryAndForecast(scope);
+  };
+  scope.querySelectorAll('[data-f]').forEach(inp=>{
+    if (inp.tagName === 'SELECT') inp.onchange = ()=>update(inp.dataset.f, inp.value);
+    else inp.oninput = ()=>{
+      const v = inp.type==='number' ? +inp.value : inp.value;
+      update(inp.dataset.f, v);
+    };
+  });
+  scope.querySelectorAll('[data-sev-set]').forEach(p=>{
+    p.onclick = ()=>{
+      state.ruleEditor.draft.severity = p.dataset.sevSet;
+      // re-render this section
+      if (isPanel) {
+        scope.querySelector('.editor-panel-body > div').innerHTML = ruleFormFieldsHTML(true) + '<div class="editor-divider"></div>' + ruleForecastHTML(true);
+        bindRuleEditor(scope, true, onClose);
+      } else {
+        scope.querySelector('.rule-form').innerHTML = ruleFormFieldsHTML();
+        scope.querySelector('.rule-chart-side').innerHTML = ruleForecastHTML();
+        bindRuleEditor(scope, false, onClose);
+      }
+    };
+  });
+  // Forecast bars
+  scope.querySelectorAll('.fc-bar').forEach(bar=>{
+    bar.onclick = ()=>{
+      scope.querySelectorAll('.fc-bar').forEach(b=>b.classList.remove('active'));
+      bar.classList.add('active');
+      const box = scope.querySelector('#samples-box');
+      box.style.display = 'block';
+      box.querySelector('.samples-day').textContent = bar.dataset.day;
+      box.querySelector('.samples-sub').textContent = `${bar.dataset.count} fire${bar.dataset.count==='1'?'':'s'}`;
+      const draft = state.ruleEditor.draft;
+      const samples = draft.conditions.sentiment==='negative' ? MENTION_BANK.crisis : draft.conditions.platform==='Instagram' ? MENTION_BANK.influencer : draft.conditions.keywords ? MENTION_BANK.campaign : MENTION_BANK.crisis;
+      const n = Math.min(+bar.dataset.count || 1, 2);
+      box.querySelector('.samples-content').innerHTML = samples.slice(0,Math.max(1,n)).map(m=>mentionCard(m)).join('') || '<div style="font-size:12px;color:var(--text-3);padding:8px 0">No mentions matched on this day.</div>';
+      // Show tooltip
+      const existing = scope.querySelector('.fc-tip'); if (existing) existing.remove();
+      const rect = bar.getBoundingClientRect(), parentRect = scope.querySelector('.fc-chart').getBoundingClientRect();
+      const tip = el('div',{class:'fc-tip'}, bar.dataset.count + (bar.dataset.count==='1'?' fire':' fires'));
+      tip.style.left = (rect.left - parentRect.left + rect.width/2) + 'px';
+      tip.style.top = (rect.top - parentRect.top) + 'px';
+      scope.querySelector('.fc-chart').appendChild(tip);
+    };
+  });
+  // Close panel button
+  if (isPanel && onClose) {
+    scope.querySelectorAll('[data-act="close-editor"]').forEach(b=>b.onclick=onClose);
+    scope.querySelectorAll('[data-act="save-editor"]').forEach(b=>b.onclick=()=>{
+      saveRule();
+      onClose();
+    });
+  }
+}
+
+let _forecastDebounce;
+function refreshSummaryAndForecast(scope) {
+  const d = state.ruleEditor.draft;
+  // Summary updates instantly
+  const sb = scope.querySelector('#rule-summary-text');
+  if (sb) { sb.innerHTML = ruleSummary(d); sb.parentElement.classList.add('flash'); setTimeout(()=>sb.parentElement.classList.remove('flash'), 800); }
+  // Forecast updates debounced — and we only swap the chart container, not the form
+  clearTimeout(_forecastDebounce);
+  _forecastDebounce = setTimeout(()=>{
+    const isPanel = scope.classList.contains('editor-panel');
+    if (isPanel) {
+      // In panel mode, the chart lives below the form inside .editor-panel-body > div
+      const container = scope.querySelector('.editor-panel-body > div');
+      // Find divider; everything after it is forecast
+      const divider = container.querySelector('.editor-divider');
+      if (divider) {
+        // Remove all siblings after divider
+        while (divider.nextSibling) container.removeChild(divider.nextSibling);
+        const tmp = document.createElement('div');
+        tmp.innerHTML = ruleForecastHTML(true);
+        while (tmp.firstChild) container.appendChild(tmp.firstChild);
+      }
+    } else {
+      const chartTarget = scope.querySelector('.rule-chart-side');
+      chartTarget.innerHTML = ruleForecastHTML();
+    }
+    // Rebind only the bar click handlers
+    bindForecastBars(scope);
+  }, 200);
+}
+
+function bindForecastBars(scope) {
+  scope.querySelectorAll('.fc-bar').forEach(bar=>{
+    bar.onclick = ()=>{
+      scope.querySelectorAll('.fc-bar').forEach(b=>b.classList.remove('active'));
+      bar.classList.add('active');
+      const box = scope.querySelector('#samples-box');
+      if (!box) return;
+      box.style.display = 'block';
+      box.querySelector('.samples-day').textContent = bar.dataset.day;
+      box.querySelector('.samples-sub').textContent = `${bar.dataset.count} fire${bar.dataset.count==='1'?'':'s'}`;
+      const draft = state.ruleEditor.draft;
+      const samples = draft.conditions.sentiment==='negative' ? MENTION_BANK.crisis : draft.conditions.platform==='Instagram' ? MENTION_BANK.influencer : draft.conditions.keywords ? MENTION_BANK.campaign : MENTION_BANK.crisis;
+      const n = Math.min(+bar.dataset.count || 1, 2);
+      box.querySelector('.samples-content').innerHTML = samples.slice(0,Math.max(1,n)).map(m=>mentionCard(m)).join('') || '<div style="font-size:12px;color:var(--text-3);padding:8px 0">No mentions matched on this day.</div>';
+      // Tooltip
+      const existing = scope.querySelector('.fc-tip'); if (existing) existing.remove();
+      const rect = bar.getBoundingClientRect(), parentRect = scope.querySelector('.fc-chart').getBoundingClientRect();
+      const tip = document.createElement('div'); tip.className = 'fc-tip'; tip.textContent = bar.dataset.count + (bar.dataset.count==='1'?' fire':' fires');
+      tip.style.left = (rect.left - parentRect.left + rect.width/2) + 'px';
+      tip.style.top = (rect.top - parentRect.top) + 'px';
+      scope.querySelector('.fc-chart').appendChild(tip);
+    };
+  });
+}
+
+function saveRule() {
+  const d = state.ruleEditor.draft;
+  if (!d.name) { toast('Rule name is required', { kind:'warn' }); return; }
+  if (state.ruleEditor.ruleId) {
+    Object.assign(RULE(state.ruleEditor.ruleId), d);
+    toast(`Rule "${d.name}" updated`);
+  } else {
+    const newRule = { ...d, id:`r${Date.now()}`, fired7d:0, fired30d:0, muteRate:0, lastFired:null, createdBy:'Kateryna P.', createdAt:NOW };
+    RULES.unshift(newRule);
+    toast(`Rule "${d.name}" created`);
+  }
+  state.ruleEditor = null;
+  navigate('rules');
+}
+
+/*═══════════════════════════════════════════════════════════════
+  ALERT ACTIONS
+═══════════════════════════════════════════════════════════════*/
+function muteAlert(id) {
+  const a = ALERTS_DATA.find(x=>x.id===id); if (!a) return;
+  const r = RULE(a.ruleId);
+  // animate row out
+  const row = $$(`.alert-row[data-id="${id}"]`)[0];
+  if (row) row.classList.add('removing');
+  setTimeout(()=>{
+    a.status = 'dismissed';
+    a._wasMuted = true;
+    if (state.selectedAlertId === id) { state.selectedAlertId = null; state.route.name='inbox'; }
+    renderAll();
+    toast(`Rule "${r?.name}" muted for this alert`, {
+      action:'Undo', timeout:8000,
+      onAction: ()=>{ a.status='new'; delete a._wasMuted; renderAll(); }
+    });
+  }, 220);
+}
+function dismissAlert(id) {
+  const a = ALERTS_DATA.find(x=>x.id===id); if (!a) return;
+  const row = $$(`.alert-row[data-id="${id}"]`)[0];
+  if (row) row.classList.add('removing');
+  const prevStatus = a.status;
+  setTimeout(()=>{
+    a.status = 'dismissed';
+    if (state.selectedAlertId === id) { state.selectedAlertId = null; state.route.name='inbox'; }
+    renderAll();
+    toast('Alert dismissed', { action:'Undo', onAction: ()=>{ a.status = prevStatus; renderAll(); } });
+  }, 220);
+}
+
+/*═══════════════════════════════════════════════════════════════
+  NOTIFICATION CENTER
+═══════════════════════════════════════════════════════════════*/
+function renderNotif() {
+  const root = $('#notif-center');
+  const f = state.notifFilter;
+  const items = ALERTS_DATA.filter(a => f==='all' || (f==='alerts' && true) || (f==='unread' && !a.read));
+  const sorted = [...items].sort((a,b)=>b.firedAt - a.firedAt);
+  const groups = {};
+  sorted.forEach(a => {
+    const d = dayLabel(a.firedAt);
+    (groups[d] = groups[d] || []).push(a);
+  });
+
+  root.innerHTML = `
+    <div class="notif-head">
+      <div class="notif-title">Notifications</div>
+      <button class="btn btn-ghost btn-sm" id="mark-all-read">Mark all read</button>
+      <button class="icon-btn" id="close-notif">${svg('close',14)}</button>
+    </div>
+    <div class="notif-tabs">
+      ${[['all','All',ALERTS_DATA.length],['unread','Unread',ALERTS_DATA.filter(a=>!a.read).length],['alerts','Alerts',ALERTS_DATA.length]].map(([k,l,c])=>`
+        <div class="notif-tab ${f===k?'active':''}" data-f="${k}">${l} <span class="tab-count">${c}</span></div>
+      `).join('')}
+    </div>
+    <div class="notif-body">
+      ${Object.keys(groups).length===0 ? `
+        <div class="empty"><div class="empty-icon">${svg('inbox',22)}</div>
+          <div class="empty-title">All caught up</div>
+          <div class="empty-body">You have no unread notifications.</div>
+        </div>` :
+        Object.entries(groups).map(([day, list])=>`
+          <div class="notif-day-label">${day}</div>
+          ${list.map(a=>{
+            const r = RULE(a.ruleId), t = TOPIC(a.topicId);
+            return `
+            <div class="notif-row ${a.read?'read':'unread'}" data-id="${a.id}">
+              <div class="notif-row-bar bar-${a.severity}"></div>
+              <div class="notif-row-body">
+                <div class="notif-row-top">
+                  <span class="sev ${a.severity}" style="font-size:9.5px;padding:1px 6px"><span class="sev-dot"></span>${a.severity}</span>
+                  <span class="notif-row-name">${r?.name||''}</span>
+                  <span class="notif-row-time">${timeAgo(a.firedAt)}</span>
+                </div>
+                <div class="notif-row-summary">${a.matchCount} mentions · ${t?.name}</div>
+                <div class="notif-row-actions">
+                  <button class="btn btn-ghost btn-sm" data-act="open">${svg('arrowRight',12)} Open</button>
+                  <button class="btn btn-ghost btn-sm" data-act="dismiss">Dismiss</button>
+                  <button class="btn btn-ghost btn-sm" data-act="mute">Mute rule</button>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}
+        `).join('')}
+    </div>
+    <div class="notif-foot"><a href="#" id="open-inbox-link">View all in Alerts inbox ${svg('arrowRight',11)}</a></div>`;
+
+  root.classList.toggle('open', state.notifOpen);
+  $('#backdrop').classList.toggle('show', state.notifOpen || state.cmdkOpen);
+
+  // events
+  setTimeout(()=>{
+    root.querySelector('#close-notif').onclick = closeNotif;
+    root.querySelector('#mark-all-read').onclick = ()=>{ ALERTS_DATA.forEach(a=>a.read=true); renderAll(); toast('All notifications marked as read'); };
+    root.querySelectorAll('.notif-tab').forEach(t=>t.onclick=()=>{ state.notifFilter = t.dataset.f; renderNotif(); });
+    root.querySelectorAll('.notif-row').forEach(row=>{
+      const id = row.dataset.id;
+      row.onclick = (e)=>{
+        if (e.target.closest('[data-act]')) return;
+        ALERTS_DATA.find(a=>a.id===id).read = true;
+        state.selectedAlertId = id;
+        state.route.name = 'alert-detail';
+        closeNotif();
+        renderAll();
+      };
+      row.querySelector('[data-act="open"]')?.addEventListener('click',(e)=>{e.stopPropagation();
+        ALERTS_DATA.find(a=>a.id===id).read = true;
+        state.selectedAlertId = id;
+        state.route.name = 'alert-detail';
+        closeNotif(); renderAll();
+      });
+      row.querySelector('[data-act="dismiss"]')?.addEventListener('click',(e)=>{e.stopPropagation();dismissAlert(id);renderNotif();});
+      row.querySelector('[data-act="mute"]')?.addEventListener('click',(e)=>{e.stopPropagation();muteAlert(id);renderNotif();});
+    });
+    root.querySelector('#open-inbox-link').onclick = (e)=>{e.preventDefault();closeNotif();navigate('inbox');};
+  },0);
+}
+function openNotif() { state.notifOpen = true; renderNotif(); }
+function closeNotif() { state.notifOpen = false; renderNotif(); }
+
+/*═══════════════════════════════════════════════════════════════
+  TOAST
+═══════════════════════════════════════════════════════════════*/
+function toast(text, opts={}) {
+  const t = el('div',{class:'toast'});
+  t.innerHTML = `
+    <span class="toast-icon">${svg('check',14)}</span>
+    <span class="toast-text">${text}</span>
+    ${opts.action ? `<span class="toast-action">${opts.action}</span>` : ''}
+    <span class="toast-progress" style="animation-duration:${opts.timeout||5000}ms"></span>`;
+  $('#toast-stack').appendChild(t);
+  if (opts.action && opts.onAction) {
+    t.querySelector('.toast-action').onclick = ()=>{
+      opts.onAction();
+      removeToast(t);
+    };
+  }
+  const timeout = opts.timeout || 5000;
+  setTimeout(()=>removeToast(t), timeout);
+}
+function removeToast(t) {
+  if (!t.parentNode) return;
+  t.classList.add('leaving');
+  setTimeout(()=>t.remove(), 220);
+}
+
+/*═══════════════════════════════════════════════════════════════
+  COMMAND PALETTE (Cmd+K)
+═══════════════════════════════════════════════════════════════*/
+function renderCmdK() {
+  const root = $('#cmdk');
+  root.innerHTML = `
+    <div class="cmdk-input-wrap">
+      ${svg('search',14)}
+      <input class="cmdk-input" id="cmdk-input" placeholder="Search alerts, rules, topics, or run a command…" autofocus />
+      <kbd style="font-family:inherit;font-size:10px;padding:1px 5px;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text-3)">esc</kbd>
+    </div>
+    <div class="cmdk-list" id="cmdk-list"></div>`;
+  root.classList.toggle('open', state.cmdkOpen);
+  $('#backdrop').classList.toggle('show', state.notifOpen || state.cmdkOpen);
+  if (state.cmdkOpen) {
+    const input = root.querySelector('#cmdk-input');
+    setTimeout(()=>input.focus(), 30);
+    input.oninput = ()=> renderCmdKList(input.value);
+    renderCmdKList('');
+  }
+}
+function renderCmdKList(q) {
+  const list = $('#cmdk-list');
+  const ql = q.toLowerCase().trim();
+  const items = [];
+
+  // Navigation commands
+  const navs = [
+    { icon:'inbox', label:'Go to Inbox', shortcut:'G I', action:()=>{closeCmdK();navigate('inbox');} },
+    { icon:'rules', label:'Go to Alert Rules', shortcut:'G R', action:()=>{closeCmdK();navigate('rules');} },
+    { icon:'plus', label:'New rule', shortcut:'N', action:()=>{closeCmdK();navigate('rule-editor-new');} },
+    { icon:'topic', label:'Go to Topics', action:()=>{closeCmdK();navigate('topics');} },
+    { icon:'analytics', label:'Go to Analytics', action:()=>{closeCmdK();navigate('analytics');} },
+    { icon:'moon', label:'Toggle dark mode', shortcut:'⇧D', action:()=>{closeCmdK();toggleDark();} },
+  ].filter(i=>!ql || i.label.toLowerCase().includes(ql));
+
+  if (navs.length) {
+    items.push(`<div class="cmdk-section">Commands</div>`);
+    navs.forEach((n,i)=>items.push(`
+      <div class="cmdk-item" data-idx="${items.length-1}">
+        <span class="cmdk-item-icon">${svg(n.icon,13)}</span>
+        <span>${n.label}</span>
+        ${n.shortcut?`<span class="cmdk-item-shortcut">${n.shortcut}</span>`:''}
+      </div>`));
+  }
+
+  // Alerts
+  const matchingAlerts = ALERTS_DATA.filter(a=>{
+    if (!ql) return false;
+    return RULE(a.ruleId)?.name.toLowerCase().includes(ql) || TOPIC(a.topicId)?.name.toLowerCase().includes(ql);
+  }).slice(0,3);
+  if (matchingAlerts.length) {
+    items.push(`<div class="cmdk-section">Alerts</div>`);
+    matchingAlerts.forEach(a=>items.push(`
+      <div class="cmdk-item" data-alert="${a.id}">
+        <span class="cmdk-item-icon">${svg('alerts',13)}</span>
+        <span>${RULE(a.ruleId)?.name} <span style="color:var(--text-3)">· ${TOPIC(a.topicId)?.name}</span></span>
+        <span class="cmdk-item-shortcut">${timeAgo(a.firedAt)}</span>
+      </div>`));
+  }
+
+  // Rules
+  const matchingRules = RULES.filter(r=>!ql || r.name.toLowerCase().includes(ql)).slice(0,4);
+  if (matchingRules.length) {
+    items.push(`<div class="cmdk-section">Rules</div>`);
+    matchingRules.forEach(r=>items.push(`
+      <div class="cmdk-item" data-rule="${r.id}">
+        <span class="cmdk-item-icon">${svg('rules',13)}</span>
+        <span>${r.name} <span style="color:var(--text-3)">· ${TOPIC(r.topicId)?.name}</span></span>
+      </div>`));
+  }
+
+  // Topics
+  const matchingTopics = TOPICS.filter(t=>!ql || t.name.toLowerCase().includes(ql));
+  if (matchingTopics.length && ql) {
+    items.push(`<div class="cmdk-section">Topics</div>`);
+    matchingTopics.forEach(t=>items.push(`
+      <div class="cmdk-item" data-topic="${t.id}">
+        <span class="cmdk-item-icon">${svg('hash',13)}</span>
+        <span>${t.name}</span>
+      </div>`));
+  }
+
+  if (items.length === 0) items.push(`<div style="padding:24px;text-align:center;color:var(--text-3);font-size:12px">No results</div>`);
+
+  list.innerHTML = items.join('');
+  // Bind
+  let active = 0;
+  const all = list.querySelectorAll('.cmdk-item');
+  all.forEach((it,i)=>{
+    if (i===0) it.classList.add('active');
+    it.onmousemove = ()=>{ all.forEach(x=>x.classList.remove('active')); it.classList.add('active'); active=i; };
+    it.onclick = ()=>{
+      const ai = it.dataset.alert, ri = it.dataset.rule, ti = it.dataset.topic;
+      if (ai) { ALERTS_DATA.find(a=>a.id===ai).read=true; state.selectedAlertId=ai; state.route.name='alert-detail'; closeCmdK(); renderAll(); }
+      else if (ri) { closeCmdK(); navigate(`rule-editor-${ri}`); }
+      else if (ti) { closeCmdK(); navigate(`topic-${ti}`); }
+      else { navs.find(n=>n.label === it.querySelector('span:nth-child(2)')?.textContent.trim())?.action(); }
+    };
+  });
+}
+function openCmdK() { state.cmdkOpen = true; renderCmdK(); }
+function closeCmdK() { state.cmdkOpen = false; renderCmdK(); }
+
+/*═══════════════════════════════════════════════════════════════
+  DARK MODE
+═══════════════════════════════════════════════════════════════*/
+function toggleDark() {
+  document.documentElement.classList.toggle('dark');
+  renderDebug();
+}
+
+/*═══════════════════════════════════════════════════════════════
+  DEBUG / DEMO PANEL
+═══════════════════════════════════════════════════════════════*/
+const DEMO = {
+  injectCritical() {
+    const newAlert = {
+      id:'a'+Date.now(), ruleId:'r1', topicId:'t1', severity:'critical',
+      firedAt: NOW - 1*MIN, status:'new', read:false,
+      matched:['Sentiment: negative','Platform: Twitter/X','Volume: >3 / hour'],
+      matchCount:5+Math.floor(Math.random()*5), mentionsKey:'crisis'
+    };
+    ALERTS_DATA.unshift(newAlert);
+    state.inboxFilter.status = 'new';
+    if (state.route.name !== 'inbox' && state.route.name !== 'alert-detail') navigate('inbox');
+    else renderAll();
+    setTimeout(()=>{
+      const r = $$(`.alert-row[data-id="${newAlert.id}"]`)[0];
+      if (r) r.classList.add('entering');
+    }, 30);
+    toast('Critical alert fired · Brand Reputation Crisis', { kind:'critical', timeout:6000 });
+  },
+  injectImportant() {
+    const newAlert = {
+      id:'a'+Date.now(), ruleId:'r2', topicId:'t2', severity:'important',
+      firedAt: NOW - 1*MIN, status:'new', read:false,
+      matched:['Verified journalists: 2','Window: 30 min'],
+      matchCount:2+Math.floor(Math.random()*3), mentionsKey:'journalist'
+    };
+    ALERTS_DATA.unshift(newAlert);
+    if (state.route.name === 'inbox' || state.route.name === 'alert-detail') renderAll();
+    else { state.route.name='inbox'; renderAll(); }
+    setTimeout(()=>{
+      const r = $$(`.alert-row[data-id="${newAlert.id}"]`)[0];
+      if (r) r.classList.add('entering');
+    },30);
+    toast('Important alert fired · Journalist mention spike');
+  },
+  injectInfo() {
+    const newAlert = {
+      id:'a'+Date.now(), ruleId:'r6', topicId:'t4', severity:'info',
+      firedAt: NOW - 1*MIN, status:'new', read:false,
+      matched:['Keyword: #NikeHoliday'],
+      matchCount:5+Math.floor(Math.random()*8), mentionsKey:'campaign'
+    };
+    ALERTS_DATA.unshift(newAlert);
+    renderAll();
+    toast('Info alert fired');
+  },
+  triggerToast() { toast('Sample toast notification', { action:'Undo', onAction:()=>{} }); },
+  goWarning() {
+    state.ruleEditor = { ruleId:null, draft:{...blankRuleDraft(), name:'High-volume test', threshold:{count:1,window:1,unit:'hour'}, conditions:{sentiment:'any',platform:'any',authorTier:'any',keywords:''}}, mode:'page', step:'form' };
+    state.route = { name:'rule-editor', params:{} };
+    renderAll();
+  },
+  goEditFromAlert() {
+    const a = ALERTS_DATA.find(x=>x.severity==='critical' && x.status==='new') || ALERTS_DATA[0];
+    state.selectedAlertId = a.id; a.read = true;
+    state.route.name = 'alert-detail';
+    renderAll();
+    setTimeout(()=>{
+      const pane = $('.detail-pane');
+      if (pane) openEditFromAlert(a, pane);
+    }, 100);
+  },
+  scenarioCalm() {
+    ALERTS_DATA.forEach(a=>{ a.status='acknowledged'; a.read=true; });
+    state.route.name='inbox';
+    state.inboxFilter.status = 'acknowledged';
+    renderAll();
+    toast('Scenario: Calm · 0 unread alerts');
+  },
+  scenarioActive() {
+    ALERTS_DATA.length = 0;
+    [
+      ['r1','t1','critical','crisis',16*MIN,5],
+      ['r2','t2','important','journalist',2*HOUR+28*MIN,3],
+      ['r4','t2','important','influencer',3*HOUR+12*MIN,1],
+      ['r6','t4','info','campaign',4*HOUR,8],
+      ['r3','t1','info','drift',1*DAY+6*HOUR,12],
+    ].forEach(([rid,tid,sev,mk,ago,n],i)=>{
+      const r = RULE(rid);
+      ALERTS_DATA.push({ id:'sa'+i, ruleId:rid, topicId:tid, severity:sev, firedAt: NOW - ago, status:'new', read: i>2, matched:[`Sentiment: ${r.conditions.sentiment}`,`Platform: ${r.conditions.platform}`], matchCount:n, mentionsKey:mk });
+    });
+    state.inboxFilter.status = 'new';
+    state.route.name='inbox';
+    renderAll();
+    toast('Scenario: Active · 3 unread, 1 critical');
+  },
+  scenarioCrisis() {
+    document.getElementById('app').classList.add('crisis-mode');
+    [1,2,3,4,5,6].forEach((_,i)=>setTimeout(()=>{
+      const newAlert = {
+        id:'crisis'+i, ruleId:'r1', topicId:'t1', severity: i<3?'critical':'important',
+        firedAt: NOW - (i+1)*MIN, status:'new', read:false,
+        matched:['Sentiment: negative','Platform: Twitter/X'],
+        matchCount: 4+Math.floor(Math.random()*8), mentionsKey:'crisis'
+      };
+      ALERTS_DATA.unshift(newAlert);
+      renderAll();
+    }, i*180));
+    setTimeout(()=>toast('Scenario: Crisis active · multiple critical alerts firing'),300);
+  },
+  scenarioEmpty() {
+    ALERTS_DATA.length = 0;
+    state.route.name='inbox';
+    state.selectedAlertId = null;
+    renderAll();
+    toast('Scenario: Empty inbox');
+  },
+  reset() {
+    location.reload();
+  },
+  toggleDark() { toggleDark(); },
+  toggleMobile() {
+    document.body.classList.toggle('mobile-preview');
+    const has = document.body.classList.contains('mobile-preview');
+    if (has) {
+      document.body.style.cssText = 'max-width:420px;margin:0 auto;border-left:1px solid var(--border);border-right:1px solid var(--border);box-shadow:0 0 0 100vmax #1c1c1a;clip-path:inset(0)';
+    } else {
+      document.body.style.cssText = '';
+    }
+    renderAll();
+  },
+};
+
+function renderDebug() {
+  const fab = $('#debug-fab'), panel = $('#debug-panel');
+  fab.classList.toggle('hidden', state.debugOpen);
+  panel.classList.toggle('open', state.debugOpen);
+  if (!state.debugOpen) return;
+
+  const isDark = document.documentElement.classList.contains('dark');
+  panel.innerHTML = `
+    <div class="debug-header">
+      <div class="debug-title"><span class="pulse"></span>Demo controls</div>
+      <button class="debug-close" id="debug-close">${svg('close',13)}</button>
+    </div>
+    <div class="debug-body">
+      <div class="debug-section">
+        <div class="debug-section-label">Trigger events</div>
+        <div class="debug-grid">
+          <button class="debug-btn" data-d="injectCritical"><span class="dbtn-icon" style="color:#ef4444">${svg('flame',12)}</span>Critical alert</button>
+          <button class="debug-btn" data-d="injectImportant"><span class="dbtn-icon" style="color:#f59e0b">${svg('alertTri',12)}</span>Important</button>
+          <button class="debug-btn" data-d="injectInfo"><span class="dbtn-icon" style="color:#6b7280">${svg('alerts',12)}</span>Info alert</button>
+          <button class="debug-btn" data-d="triggerToast"><span class="dbtn-icon">${svg('check',12)}</span>Show toast</button>
+        </div>
+      </div>
+      <div class="debug-section">
+        <div class="debug-section-label">Scenarios</div>
+        <div class="debug-grid">
+          <button class="debug-btn" data-d="scenarioCalm">${svg('check',12)} Calm day</button>
+          <button class="debug-btn" data-d="scenarioActive">${svg('alerts',12)} Active</button>
+          <button class="debug-btn" data-d="scenarioCrisis">${svg('flame',12)} Crisis mode</button>
+          <button class="debug-btn" data-d="scenarioEmpty">${svg('inbox',12)} Empty inbox</button>
+        </div>
+      </div>
+      <div class="debug-section">
+        <div class="debug-section-label">Quick jumps</div>
+        <div class="debug-grid">
+          <button class="debug-btn" data-d="goEditFromAlert" data-arg="">${svg('edit',12)} Edit-from-alert</button>
+          <button class="debug-btn" data-d="goWarning">${svg('alertTri',12)} Forecast warn</button>
+          <button class="debug-btn debug-btn-full" onclick="openNotif()">${svg('alerts',12)} Open notification center</button>
+          <button class="debug-btn debug-btn-full" onclick="openCmdK()">${svg('search',12)} Open command palette ⌘K</button>
+        </div>
+      </div>
+      <div class="debug-section">
+        <div class="debug-section-label">View</div>
+        <div class="debug-toggle ${isDark?'on':''}" id="dark-toggle">
+          <span>${svg('moon',12)} Dark mode</span>
+          <span class="debug-toggle-switch"></span>
+        </div>
+      </div>
+      <div class="debug-section">
+        <div class="debug-section-label">State</div>
+        <div class="debug-stats">
+          <div class="debug-stat"><span>Alerts (total)</span><span class="debug-stat-val">${ALERTS_DATA.length}</span></div>
+          <div class="debug-stat"><span>New unread</span><span class="debug-stat-val">${ALERTS_DATA.filter(a=>!a.read && a.status==='new').length}</span></div>
+          <div class="debug-stat"><span>Rules</span><span class="debug-stat-val">${RULES.length}</span></div>
+          <div class="debug-stat"><span>Route</span><span class="debug-stat-val">${state.route.name}</span></div>
+        </div>
+      </div>
+      <div class="debug-section">
+        <button class="debug-btn debug-btn-full danger" data-d="reset">${svg('refresh',12)} Reset prototype</button>
+      </div>
+    </div>`;
+  panel.querySelector('#debug-close').onclick = ()=>{ state.debugOpen = false; renderDebug(); };
+  panel.querySelectorAll('[data-d]').forEach(b=>{
+    b.onclick = ()=> DEMO[b.dataset.d]?.();
+  });
+  panel.querySelector('#dark-toggle').onclick = toggleDark;
+}
+
+/*═══════════════════════════════════════════════════════════════
+  EVENTS / INIT
+═══════════════════════════════════════════════════════════════*/
+function init() {
+  // Bell
+  $('#bell-btn').onclick = ()=> state.notifOpen ? closeNotif() : openNotif();
+  // Search pill
+  $('#search-pill').onclick = openCmdK;
+  // Backdrop
+  $('#backdrop').onclick = ()=>{
+    if (state.notifOpen) closeNotif();
+    if (state.cmdkOpen) closeCmdK();
+  };
+  // Debug FAB
+  $('#debug-fab').onclick = ()=>{ state.debugOpen = true; renderDebug(); };
+
+  // Keyboard
+  document.addEventListener('keydown', (e)=>{
+    if (e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA' || e.target.tagName==='SELECT') {
+      if (e.key === 'Escape' && (state.cmdkOpen || state.notifOpen)) {
+        if (state.cmdkOpen) closeCmdK(); else closeNotif();
+      }
+      return;
+    }
+    if ((e.metaKey||e.ctrlKey) && e.key === 'k') { e.preventDefault(); state.cmdkOpen ? closeCmdK() : openCmdK(); return; }
+    if (e.key === 'Escape') {
+      if (state.cmdkOpen) closeCmdK();
+      else if (state.notifOpen) closeNotif();
+      else if (state.debugOpen) { state.debugOpen=false; renderDebug(); }
+      else if (state.selectedAlertId) { state.selectedAlertId=null; state.route.name='inbox'; renderAll(); }
+      return;
+    }
+    if (e.key === 'd' || e.key === 'D') {
+      if (e.shiftKey) { toggleDark(); return; }
+      state.debugOpen = !state.debugOpen; renderDebug(); return;
+    }
+    if (e.key === '/') { e.preventDefault(); openCmdK(); return; }
+    if (e.key === 'g') {
+      const next = (ev) => {
+        if (ev.key === 'i') navigate('inbox');
+        else if (ev.key === 'r') navigate('rules');
+        else if (ev.key === 't') navigate('topics');
+        document.removeEventListener('keydown', next);
+      };
+      document.addEventListener('keydown', next, { once:true });
+      return;
+    }
+    if (e.key === 'n' && state.route.name === 'rules') { navigate('rule-editor-new'); return; }
+  });
+
+  renderAll();
+
+  // Welcome toast on load
+  setTimeout(()=>toast('Welcome — press D for demo controls, ⌘K to search', { timeout:6000 }), 500);
+}
+
+// Start
+init();
+
+</script>
+
+</body>
+</html>

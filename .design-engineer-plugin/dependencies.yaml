@@ -1,0 +1,465 @@
+# Design-Engineer Dependency Graph
+# ─────────────────────────────────
+# Maps all deliverables produced by the plugin and their relationships.
+# When a deliverable is updated, downstream dependents should be reviewed.
+#
+# Status values: not_started | in_progress | complete
+# Each deliverable tracks:
+#   - status: current state
+#   - depends_on: list of deliverables that must exist or inform this one
+#   - informs: list of deliverables that should be reviewed when this one changes
+#   - folder: subdirectory within the deliverables path
+#   - phase: pipeline phase where this deliverable is primarily created
+#   - skill: the skill that produces this deliverable
+#   - last_updated: timestamp of last modification (set by the plugin)
+
+deliverables:
+
+  # ═══════════════════════════════════════════
+  # PHASE 1: DISCOVERY & FOUNDATION
+  # ═══════════════════════════════════════════
+
+  problem-statement:
+    status: not_started
+    depends_on: []
+    informs:
+      - target-audience
+      - assumptions
+      - competitor-analysis
+      - storybrand
+      - business-plan
+      - mvp-requirements
+    folder: foundation
+    phase: 1
+    skill: ux-problem-statement
+    last_updated: null
+
+  target-audience:
+    status: not_started
+    depends_on:
+      - problem-statement
+    informs:
+      - assumptions
+      - competitor-analysis
+      - user-interviews
+      - storybrand
+      - business-plan
+      - mvp-requirements
+      - journey-map
+      - bias-audit
+    folder: foundation
+    phase: 1
+    skill: ux-target-audience
+    last_updated: null
+
+  assumptions:
+    status: not_started
+    depends_on:
+      - problem-statement
+      - target-audience
+    informs:
+      - competitor-analysis
+      - user-interviews
+      - business-plan
+      - mvp-requirements
+    folder: foundation
+    phase: 1
+    skill: ux-assumptions
+    last_updated: null
+
+  competitor-analysis:
+    status: not_started
+    depends_on:
+      - problem-statement
+      - target-audience
+      - assumptions
+    informs:
+      - storybrand
+      - business-plan
+      - mvp-requirements
+      - design-references
+    folder: research
+    phase: 1
+    skill: ux-competitor-analysis
+    last_updated: null
+
+  user-interviews:
+    status: not_started
+    depends_on:
+      - target-audience
+      - assumptions
+    informs:
+      - storybrand
+      - business-plan
+      - mvp-requirements
+      - journey-map
+      - bias-audit
+    folder: research
+    phase: 1
+    skill: ux-user-interviews
+    last_updated: null
+
+  # ═══════════════════════════════════════════
+  # PHASE 2: STRATEGY & POSITIONING
+  # ═══════════════════════════════════════════
+
+  storybrand:
+    status: not_started
+    depends_on:
+      - problem-statement
+      - target-audience
+      - competitor-analysis
+    informs:
+      - business-plan
+      - mvp-requirements
+      - journey-map
+    folder: foundation
+    phase: 2
+    skill: ux-storybrand
+    last_updated: null
+
+  business-plan:
+    status: not_started
+    depends_on:
+      - problem-statement
+      - target-audience
+      - assumptions
+      - competitor-analysis
+      - storybrand
+    informs:
+      - mvp-requirements
+    folder: foundation
+    phase: 2
+    skill: ux-business-plan
+    last_updated: null
+
+  story-panels:
+    status: not_started
+    depends_on:
+      - target-audience
+      - storybrand
+    informs:
+      - journey-map
+      - bias-audit
+      - mvp-requirements
+    folder: design
+    phase: 2
+    skill: ux-story-panels
+    last_updated: null
+
+  behavior-map:
+    status: not_started
+    depends_on:
+      - target-audience
+      - user-interviews
+    informs:
+      - journey-map
+      - bias-audit
+      - mvp-requirements
+    folder: design
+    phase: 2
+    skill: ux-behavior-mapping
+    last_updated: null
+
+  psych-variation:
+    status: not_started
+    depends_on:
+      - target-audience
+      - story-panels
+      - behavior-map
+    informs:
+      - journey-map
+      - bias-audit
+    folder: design
+    phase: 2
+    skill: ux-motivation-audit
+    last_updated: null
+
+  # ═══════════════════════════════════════════
+  # PHASE 3: PRODUCT PLANNING
+  # ═══════════════════════════════════════════
+
+  mvp-requirements:
+    status: not_started
+    depends_on:
+      - problem-statement
+      - target-audience
+      - assumptions
+      - competitor-analysis
+      - storybrand
+      - business-plan
+      - story-panels
+      - behavior-map
+    informs:
+      - information-architecture
+      - design-references
+      - prototype
+      - kickstart-prompts
+      - agent-pipeline
+    folder: planning
+    phase: 3
+    skill: ux-mvp-requirements
+    last_updated: null
+
+  information-architecture:
+    status: not_started
+    depends_on:
+      - mvp-requirements
+    informs:
+      - design-references
+      - prototype
+      - figma-workflow
+      - journey-map
+      - kickstart-prompts
+    folder: planning
+    phase: 3
+    skill: ux-information-architecture
+    last_updated: null
+
+  # ═══════════════════════════════════════════
+  # PHASE 4: DESIGN & VALIDATION
+  # ═══════════════════════════════════════════
+
+  bias-audit:
+    status: not_started
+    depends_on:
+      - target-audience
+      - story-panels
+      - behavior-map
+      - psych-variation
+      - information-architecture
+    informs:
+      - journey-map
+      - ethics-review
+      - product-assessment
+    folder: design
+    phase: 4
+    skill: ux-bias-audit
+    last_updated: null
+
+  journey-map:
+    status: not_started
+    depends_on:
+      - target-audience
+      - story-panels
+      - information-architecture
+      - bias-audit
+    informs:
+      - ethics-review
+      - product-assessment
+      - figma-workflow
+    folder: design
+    phase: 4
+    skill: ux-journey-mapping
+    last_updated: null
+
+  ethics-review:
+    status: not_started
+    depends_on:
+      - bias-audit
+      - journey-map
+    informs:
+      - product-assessment
+    folder: design
+    phase: 4
+    skill: ux-ethics-review
+    last_updated: null
+
+  design-references:
+    status: not_started
+    depends_on:
+      - mvp-requirements
+      - information-architecture
+      - competitor-analysis
+    informs:
+      - figma-workflow
+      - prototype
+    folder: design
+    phase: 4
+    skill: ui-references-moodboard
+    last_updated: null
+
+  prototype:
+    status: not_started
+    depends_on:
+      - mvp-requirements
+      - information-architecture
+      - design-references
+      - journey-map
+      - bias-audit
+    informs:
+      - figma-workflow
+      - product-assessment
+    folder: prototype
+    phase: 4
+    skill: dev-prototyping
+    last_updated: null
+
+  landing-page:
+    status: not_started
+    depends_on:
+      - storybrand
+      - mvp-requirements
+    informs:
+      - figma-workflow
+    folder: prototype
+    phase: 4
+    skill: ui-landing-page
+    last_updated: null
+
+  figma-workflow:
+    status: not_started
+    depends_on:
+      - information-architecture
+      - design-references
+      - journey-map
+      - prototype
+    informs:
+      - figma-handoff
+      - claude-md-draft
+      - kickstart-prompts
+    folder: design
+    phase: 4
+    skill: ui-figma-guide
+    last_updated: null
+
+  figma-handoff:
+    status: not_started
+    depends_on:
+      - figma-workflow
+    informs:
+      - product-assessment
+      - claude-md-draft
+      - kickstart-prompts
+    folder: design
+    phase: 4
+    skill: ui-figma-handoff
+    last_updated: null
+
+  product-assessment:
+    status: not_started
+    depends_on:
+      - bias-audit
+      - journey-map
+      - ethics-review
+    informs:
+      - mvp-requirements
+      - claude-md-draft
+    folder: reviews
+    phase: 4
+    skill: ux-full-review
+    last_updated: null
+
+  # ═══════════════════════════════════════════
+  # PHASE 5: DEVELOPMENT
+  # ═══════════════════════════════════════════
+
+  claude-md-draft:
+    status: not_started
+    depends_on:
+      - mvp-requirements
+      - information-architecture
+      - figma-workflow
+      - product-assessment
+    informs:
+      - kickstart-prompts
+      - agent-pipeline
+    folder: dev
+    phase: 5
+    skill: dev-claude-md
+    last_updated: null
+
+  kickstart-prompts:
+    status: not_started
+    depends_on:
+      - mvp-requirements
+      - information-architecture
+      - claude-md-draft
+    informs:
+      - agent-pipeline
+    folder: dev
+    phase: 5
+    skill: dev-starter-prompts
+    last_updated: null
+
+  agent-pipeline:
+    status: not_started
+    depends_on:
+      - claude-md-draft
+      - kickstart-prompts
+      - mvp-requirements
+    informs:
+      - mcp-notes
+    folder: dev
+    phase: 5
+    skill: dev-agent-setup
+    last_updated: null
+
+  mcp-notes:
+    status: not_started
+    depends_on:
+      - agent-pipeline
+    informs: []
+    folder: dev
+    phase: 5
+    skill: dev-mcp-setup
+    last_updated: null
+
+  github-workflow:
+    status: not_started
+    depends_on: []
+    informs: []
+    folder: dev
+    phase: 5
+    skill: dev-github-workflow
+    last_updated: null
+
+  # ═══════════════════════════════════════════
+  # PSYCHOLOGY AUDIT (standalone, any phase)
+  # ═══════════════════════════════════════════
+
+  master-audit:
+    status: not_started
+    depends_on:
+      - information-architecture
+    informs:
+      - bias-audit
+      - journey-map
+      - product-assessment
+    folder: psych
+    phase: any
+    skill: psych-full-scan
+    last_updated: null
+
+  # ═══════════════════════════════════════════
+  # COMPOUND DOCUMENTATION (ongoing)
+  # ═══════════════════════════════════════════
+
+  project-status:
+    status: not_started
+    depends_on: []
+    informs: []
+    folder: dev
+    phase: ongoing
+    skill: meta-document
+    last_updated: null
+
+  solved-problems:
+    status: not_started
+    depends_on: []
+    informs:
+      - project-status
+    folder: dev
+    phase: ongoing
+    skill: meta-document
+    last_updated: null
+
+  learnings:
+    status: not_started
+    depends_on: []
+    informs:
+      - project-status
+    folder: dev
+    phase: ongoing
+    skill: meta-document
+    last_updated: null

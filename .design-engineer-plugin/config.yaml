@@ -1,0 +1,9 @@
+project_type: new
+mode: guided
+goal: design
+created_at: 2026-05-05
+environment:
+  git: false
+  claude_md: false
+  tech_stack: none
+  source_code: false

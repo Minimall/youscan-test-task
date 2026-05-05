@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash *)",
+      "Bash(pkill -f \"http.server 8765\")",
+      "Bash(claude mcp *)",
+      "mcp__playwright__browser_navigate",
+      "Bash(python3 -m http.server 8765)",
+      "Bash(echo \"Server PID: $!\")",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_evaluate"
+    ]
+  }
+}
