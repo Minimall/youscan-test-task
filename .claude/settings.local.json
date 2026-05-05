@@ -15,7 +15,11 @@
       "mcp__playwright__browser_snapshot",
       "mcp__playwright__browser_resize",
       "mcp__playwright__browser_hover",
-      "Bash(pkill -f \"python3 -m http.server 8765\")"
+      "Bash(pkill -f \"python3 -m http.server 8765\")",
+      "Bash(npx skills *)",
+      "Bash(pkill -f \"skills add vercel-labs\")",
+      "Bash(pkill -f \"npm exec skills\")",
+      "Bash(npx *)"
     ]
   }
 }
