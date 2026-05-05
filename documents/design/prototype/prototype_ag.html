@@ -357,6 +357,8 @@ main{display:flex;flex-direction:column;overflow:hidden;min-width:0;background:v
 .row-actions-cell{width:1px;white-space:nowrap}
 .row-actions-cell .actions{display:none;gap:2px}
 .tbl tbody tr:hover .row-actions-cell .actions{display:flex}
+.tbl tbody tr.high-mute td{opacity:.75;filter:grayscale(.8)}
+.tbl tbody tr.high-mute:hover td{opacity:.95;filter:grayscale(.4)}
 
 .rule-cell{display:flex;align-items:center;gap:10px}
 .rule-bar{width:3px;height:18px;border-radius:2px;flex-shrink:0}
@@ -400,7 +402,7 @@ main{display:flex;flex-direction:column;overflow:hidden;min-width:0;background:v
 .cmdk-item-shortcut{margin-left:auto;font-size:11px;color:var(--text-3)}
 
 /*═══ DEBUG PANEL (floating) ═════════════════════════════════*/
-#debug{position:fixed;bottom:20px;left:20px;z-index:300;font-family:'Inter',sans-serif}
+#debug{position:fixed;bottom:20px;right:20px;z-index:300;font-family:'Inter',sans-serif}
 .debug-fab{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#1c1c1a;color:#f0f0ec;border-radius:20px;box-shadow:var(--shadow-lg);cursor:pointer;font-size:12px;font-weight:500;border:1px solid #2a2a28;transition:transform var(--t-fast),background var(--t-fast)}
 .debug-fab:hover{background:#2a2a28;transform:translateY(-1px)}
 .debug-fab.hidden{display:none}
@@ -767,7 +769,7 @@ function dayLabel(ms) {
 ═══════════════════════════════════════════════════════════════*/
 function generateForecast(rule) {
   // 30 days of historical fire counts simulated from rule conditions
-  const seed = rule.id?.charCodeAt?.(1) || rule.name?.charCodeAt?.(0) || 7;
+  const seed = rule.id ? rule.id.charCodeAt(1) : 7;
   const baseRate = (rule.threshold && rule.threshold.count <= 2) ? 4 : (rule.threshold?.count <= 5 ? 1.4 : 0.4);
   const arr = [];
   for (let i=0;i<30;i++) {
@@ -1246,6 +1248,7 @@ function viewRules() {
             <th class="num">Fired 30d</th>
             <th class="num">Mute rate</th>
             <th>Last fired</th>
+            <th>Created by</th>
             <th class="row-actions-cell"></th>
           </tr>
         </thead>
@@ -1256,7 +1259,7 @@ function viewRules() {
             const muteCls = r.muteRate>=30?'health-warn':(r.muteRate>=50?'health-crit':'');
             const fired7Cls = r.fired7d>=4?'health-crit':r.fired7d>=2?'health-warn':'';
             return `
-              <tr class="${zero?'zero-fire':''}" data-rule="${r.id}">
+              <tr class="${zero?'zero-fire':''} ${r.muteRate>=30?'high-mute':''}" data-rule="${r.id}">
                 <td>
                   <div class="rule-cell">
                     <div class="rule-bar bar-${r.severity}"></div>
@@ -1271,6 +1274,7 @@ function viewRules() {
                 <td class="num">${r.fired30d}</td>
                 <td class="num ${muteCls}">${r.fired30d===0?'—':r.muteRate+'%'}</td>
                 <td style="color:var(--text-2)">${timeAgo(r.lastFired)}</td>
+                <td style="color:var(--text-2)">${r.createdBy}</td>
                 <td class="row-actions-cell">
                   <div class="actions">
                     <button class="row-action" data-act="view" title="View alerts">${svg('inbox',13)}</button>
@@ -1342,9 +1346,11 @@ function viewRuleEditor() {
   const bar = el('div',{class:'list-header', style:'padding:12px 24px;flex-direction:row;align-items:center;gap:12px'});
   bar.innerHTML = `
     <div style="flex:1;display:flex;align-items:center;gap:10px">
+      <button class="btn btn-ghost btn-sm" id="cancel-rule">${svg('close',13)} Cancel</button>
+      <span class="crumb-sep">${svg('chevronRight',11)}</span>
       <span class="list-title" style="font-size:15px">${ed.ruleId ? RULE(ed.ruleId).name : (ed.draft.name||'New rule')}</span>
     </div>
-    <button class="btn btn-ghost btn-sm" id="cancel-rule">${svg('close',13)} Cancel</button>
+    <button class="btn btn-secondary btn-sm" id="discard-rule">Discard</button>
     <button class="btn btn-primary btn-sm" id="save-rule">${svg('check',13)} Save rule</button>`;
   wrap.appendChild(bar);
 
@@ -1389,6 +1395,12 @@ function viewRuleEditor() {
   // Bind top bar
   setTimeout(()=>{
     bar.querySelector('#cancel-rule').onclick = ()=>navigate('rules');
+    bar.querySelector('#discard-rule').onclick = ()=>{
+      state.ruleEditor.draft = ed.ruleId ? ruleToDraft(RULE(ed.ruleId)) : blankRuleDraft();
+      state.ruleEditor.step = ed.ruleId ? 'form' : 'preset';
+      renderView();
+      toast('Changes discarded');
+    };
     bar.querySelector('#save-rule').onclick = ()=>saveRule();
   },0);
 
@@ -1471,13 +1483,11 @@ function ruleFormFieldsHTML(compact=false) {
       <div class="field-row">
         <span class="field-text">Trigger when more than</span>
         <input class="field-input inline-input" data-f="threshold.count" type="number" min="1" value="${d.threshold.count}" />
-        <span style="display:inline-flex;align-items:center;gap:7px;flex-shrink:0">
-          <span class="field-text">mentions in</span>
-          <input class="field-input inline-input" data-f="threshold.window" type="number" min="1" value="${d.threshold.window}" style="width:48px" />
-          <div class="inline-select"><select data-f="threshold.unit">
-            ${['minutes','hour','hours','day','days'].map(v=>`<option value="${v}" ${d.threshold.unit===v?'selected':''}>${v}</option>`).join('')}
-          </select></div>
-        </span>
+        <span class="field-text">mentions in</span>
+        <input class="field-input inline-input" data-f="threshold.window" type="number" min="1" value="${d.threshold.window}" style="width:48px" />
+        <div class="inline-select"><select data-f="threshold.unit">
+          ${['minutes','hour','hours','day','days'].map(v=>`<option value="${v}" ${d.threshold.unit===v?'selected':''}>${v}</option>`).join('')}
+        </select></div>
       </div>
     </div>
     <div class="field">
@@ -1705,7 +1715,7 @@ function muteAlert(id) {
     a._wasMuted = true;
     if (state.selectedAlertId === id) { state.selectedAlertId = null; state.route.name='inbox'; }
     renderAll();
-    toast(`Rule "${r?.name}" muted for this alert`, {
+    toast(`Rule "${r?.name}" muted for 24h`, {
       action:'Undo', timeout:8000,
       onAction: ()=>{ a.status='new'; delete a._wasMuted; renderAll(); }
     });
