@@ -1,0 +1,296 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: "Y"
+        - generic [ref=e6]: YouScan
+      - generic [ref=e7] [cursor=pointer]:
+        - generic [ref=e8]: NU
+        - generic [ref=e9]: Nike CEE
+        - img [ref=e10]
+      - navigation [ref=e12]:
+        - generic [ref=e1631]:
+          - generic [ref=e1632]:
+            - generic [ref=e1633]: Workspace
+            - button "Add" [ref=e1634] [cursor=pointer]:
+              - img [ref=e1635]
+          - generic [ref=e1636] [cursor=pointer]:
+            - img [ref=e1638]
+            - generic [ref=e1641]: Topics
+            - generic [ref=e1642]: "4"
+          - generic [ref=e1643] [cursor=pointer]:
+            - img [ref=e1645]
+            - generic [ref=e1646]: Analytics
+          - generic [ref=e1647] [cursor=pointer]:
+            - img [ref=e1649]
+            - generic [ref=e1652]: Reports
+          - generic [ref=e1653] [cursor=pointer]:
+            - img [ref=e1655]
+            - generic [ref=e1660]: Team
+        - generic [ref=e1661]:
+          - generic [ref=e1662]:
+            - generic [ref=e1663]: Alerts
+            - button "Add" [ref=e1664] [cursor=pointer]:
+              - img [ref=e1665]
+          - generic [ref=e1666] [cursor=pointer]:
+            - img [ref=e1668]
+            - generic [ref=e1671]: Alerts
+            - generic [ref=e1672]: "6"
+          - generic [ref=e1673]:
+            - generic [ref=e1674] [cursor=pointer]:
+              - generic [ref=e1675]: Inbox
+              - generic [ref=e1676]: "6"
+            - generic [ref=e1677] [cursor=pointer]:
+              - generic [ref=e1678]: Alert Rules
+              - generic [ref=e1679]: "8"
+        - generic [ref=e1680]:
+          - generic [ref=e1681]:
+            - generic [ref=e1682]: Topics
+            - button "Add" [ref=e1683] [cursor=pointer]:
+              - img [ref=e1684]
+          - generic [ref=e1685] [cursor=pointer]:
+            - img [ref=e1687]
+            - generic [ref=e1690]: Nike Ukraine
+          - generic [ref=e1691] [cursor=pointer]:
+            - img [ref=e1693]
+            - generic [ref=e1696]: Nike Global
+          - generic [ref=e1697] [cursor=pointer]:
+            - img [ref=e1699]
+            - generic [ref=e1702]: Adidas comparison
+          - generic [ref=e1703] [cursor=pointer]:
+            - img [ref=e1705]
+            - generic [ref=e1708]: Holiday campaign
+      - generic [ref=e91]:
+        - generic [ref=e92]: KP
+        - generic [ref=e93]:
+          - generic [ref=e94]: Kateryna P.
+          - generic [ref=e95]: PR Specialist
+        - button "Settings" [ref=e96] [cursor=pointer]:
+          - img [ref=e97]
+    - main [ref=e100]:
+      - generic [ref=e101]:
+        - generic [ref=e102]:
+          - generic [ref=e1709] [cursor=pointer]: Alerts
+          - img [ref=e1711]
+          - generic [ref=e1713] [cursor=pointer]: Alert Rules
+          - img [ref=e1715]
+          - generic [ref=e1717]: Brand Reputation Crisis
+        - generic [ref=e108] [cursor=pointer]:
+          - img [ref=e109]
+          - generic [ref=e112]: Search or jump to…
+          - generic [ref=e113]: ⌘K
+        - generic [ref=e114]:
+          - button "Help" [ref=e115] [cursor=pointer]:
+            - img [ref=e116]
+          - button "Notifications" [ref=e119] [cursor=pointer]:
+            - img [ref=e120]
+            - generic [ref=e123]: "1"
+      - generic [ref=e1718]:
+        - generic [ref=e1719]:
+          - generic [ref=e1721]: Brand Reputation Crisis
+          - button "Cancel" [ref=e1722] [cursor=pointer]:
+            - img [ref=e1723]
+            - text: Cancel
+          - button "Save rule" [ref=e1726] [cursor=pointer]:
+            - img [ref=e1727]
+            - text: Save rule
+        - generic [ref=e1729]:
+          - generic [ref=e1730]:
+            - generic [ref=e1731]:
+              - generic [ref=e1732]: Rule name
+              - textbox "e.g. Brand Reputation Crisis" [ref=e1733]: Brand Reputation Crisis
+            - generic [ref=e1734]:
+              - generic [ref=e1735]: Topic
+              - generic [ref=e1736] [cursor=pointer]:
+                - combobox [ref=e1737]:
+                  - option "Nike Ukraine" [selected]
+                  - option "Nike Global"
+                  - option "Adidas comparison"
+                  - option "Holiday campaign"
+                - img [ref=e1738]
+            - generic [ref=e1740]:
+              - generic [ref=e1741]: Conditions
+              - generic [ref=e1742]:
+                - generic [ref=e1743]:
+                  - generic [ref=e1744]: Sentiment is
+                  - combobox [ref=e1746] [cursor=pointer]:
+                    - option "any"
+                    - option "negative" [selected]
+                    - option "positive"
+                    - option "neutral"
+                - generic [ref=e1747]:
+                  - generic [ref=e1748]: Platform is
+                  - combobox [ref=e1750] [cursor=pointer]:
+                    - option "any"
+                    - option "Twitter/X" [selected]
+                    - option "Instagram"
+                    - option "Facebook"
+                    - option "Reddit"
+                    - option "LinkedIn"
+                    - option "News"
+                - generic [ref=e1751]:
+                  - generic [ref=e1752]: Author tier is
+                  - combobox [ref=e1754] [cursor=pointer]:
+                    - option "any"
+                    - option "low"
+                    - option "medium or higher" [selected]
+                    - option "high only"
+                - generic [ref=e1755]:
+                  - generic [ref=e1756]: Keywords contain
+                  - textbox "optional, comma-separated" [ref=e1757]
+            - generic [ref=e1758]:
+              - generic [ref=e1759]: Threshold
+              - generic [ref=e1760]:
+                - generic [ref=e1761]: Trigger when more than
+                - spinbutton [ref=e1762]: "3"
+                - generic [ref=e1763]:
+                  - generic [ref=e1764]: mentions in
+                  - spinbutton [ref=e1765]: "1"
+                  - combobox [ref=e1767] [cursor=pointer]:
+                    - option "minutes"
+                    - option "hour" [selected]
+                    - option "hours"
+                    - option "day"
+                    - option "days"
+            - generic [ref=e1768]:
+              - generic [ref=e1769]: Severity
+              - generic [ref=e1770]:
+                - generic [ref=e1771] [cursor=pointer]: Info
+                - generic [ref=e1773] [cursor=pointer]: Important
+                - generic [ref=e1775] [cursor=pointer]: Critical
+            - generic [ref=e1777]:
+              - generic [ref=e1778]: Recipients
+              - generic [ref=e1779]:
+                - generic [ref=e1780]: 4 topic watchers notified by default
+                - button "Override" [ref=e1781] [cursor=pointer]:
+                  - text: Override
+                  - img [ref=e1782]
+            - generic [ref=e1784]:
+              - generic [ref=e1785]: Rule summary
+              - generic [ref=e1786]:
+                - text: Fire when
+                - emphasis [ref=e1787]: negative
+                - text: mentions on
+                - emphasis [ref=e1788]: Twitter/X
+                - text: from
+                - emphasis [ref=e1789]: medium or higher
+                - text: authors on
+                - emphasis [ref=e1790]: Nike Ukraine
+                - text: exceed
+                - emphasis [ref=e1791]: 3 per 1 hour
+                - text: ". Severity:"
+                - emphasis [ref=e1792]: critical
+                - text: .
+          - generic [ref=e1793]:
+            - generic [ref=e1794]:
+              - generic [ref=e1795]:
+                - generic [ref=e1796]: "40"
+                - generic [ref=e1797]: Would have fired in last 30 days
+              - generic [ref=e1798]:
+                - text: ~1.3 / day
+                - text: Updated live as you edit
+            - generic [ref=e1832]:
+              - generic [ref=e1833]: Apr 6
+              - generic [ref=e1834]: Apr 16
+              - generic [ref=e1835]: Apr 26
+              - generic [ref=e1836]: May 5
+            - generic [ref=e1837]: Click any bar to see what would have fired that day. Forecast is based on the last 30 days of mention data.
+  - complementary [ref=e241]:
+    - generic [ref=e1838]:
+      - generic [ref=e1839]: Notifications
+      - button "Mark all read" [ref=e1840] [cursor=pointer]
+      - button [ref=e1841] [cursor=pointer]:
+        - img [ref=e1842]
+    - generic [ref=e1845]:
+      - generic [ref=e1846] [cursor=pointer]:
+        - text: All
+        - generic [ref=e1847]: "12"
+      - generic [ref=e1848] [cursor=pointer]:
+        - text: Unread
+        - generic [ref=e1849]: "1"
+      - generic [ref=e1850] [cursor=pointer]:
+        - text: Alerts
+        - generic [ref=e1851]: "12"
+    - generic [ref=e1852]:
+      - generic [ref=e1853]: Today
+      - generic [ref=e1856] [cursor=pointer]:
+        - generic [ref=e1857]:
+          - generic [ref=e1858]: critical
+          - generic [ref=e1860]: Brand Reputation Crisis
+          - generic [ref=e1861]: 16 min ago
+        - generic [ref=e1862]: 5 mentions · Nike Ukraine
+      - generic [ref=e1865] [cursor=pointer]:
+        - generic [ref=e1866]:
+          - generic [ref=e1867]: important
+          - generic [ref=e1869]: Journalist mention spike
+          - generic [ref=e1870]: 2h ago
+        - generic [ref=e1871]: 3 mentions · Nike Global
+      - generic [ref=e1874] [cursor=pointer]:
+        - generic [ref=e1875]:
+          - generic [ref=e1876]: important
+          - generic [ref=e1878]: Influencer mention
+          - generic [ref=e1879]: 3h ago
+        - generic [ref=e1880]: 1 mentions · Nike Global
+      - generic [ref=e1883] [cursor=pointer]:
+        - generic [ref=e1884]:
+          - generic [ref=e1885]: info
+          - generic [ref=e1887]: Holiday campaign mentions
+          - generic [ref=e1888]: 4h ago
+        - generic [ref=e1889]: 8 mentions · Holiday campaign
+      - generic [ref=e1892] [cursor=pointer]:
+        - generic [ref=e1893]:
+          - generic [ref=e1894]: critical
+          - generic [ref=e1896]: Brand Reputation Crisis
+          - generic [ref=e1897]: 22h ago
+        - generic [ref=e1898]: 7 mentions · Nike Ukraine
+      - generic [ref=e1899]: Yesterday
+      - generic [ref=e1902] [cursor=pointer]:
+        - generic [ref=e1903]:
+          - generic [ref=e1904]: info
+          - generic [ref=e1906]: Negative sentiment drift
+          - generic [ref=e1907]: Yesterday
+        - generic [ref=e1908]: 12 mentions · Nike Ukraine
+      - generic [ref=e1911] [cursor=pointer]:
+        - generic [ref=e1912]:
+          - generic [ref=e1913]: info
+          - generic [ref=e1915]: Holiday campaign mentions
+          - generic [ref=e1916]: Yesterday
+        - generic [ref=e1917]: 6 mentions · Holiday campaign
+      - generic [ref=e1918]: This week
+      - generic [ref=e1921] [cursor=pointer]:
+        - generic [ref=e1922]:
+          - generic [ref=e1923]: info
+          - generic [ref=e1925]: Competitor share-of-voice spike
+          - generic [ref=e1926]: 2d ago
+        - generic [ref=e1927]: 34 mentions · Adidas comparison
+      - generic [ref=e1930] [cursor=pointer]:
+        - generic [ref=e1931]:
+          - generic [ref=e1932]: info
+          - generic [ref=e1934]: Holiday campaign mentions
+          - generic [ref=e1935]: 2d ago
+        - generic [ref=e1936]: 5 mentions · Holiday campaign
+      - generic [ref=e1939] [cursor=pointer]:
+        - generic [ref=e1940]:
+          - generic [ref=e1941]: important
+          - generic [ref=e1943]: Brand Reputation Crisis
+          - generic [ref=e1944]: 3d ago
+        - generic [ref=e1945]: 4 mentions · Nike Ukraine
+      - generic [ref=e1948] [cursor=pointer]:
+        - generic [ref=e1949]:
+          - generic [ref=e1950]: info
+          - generic [ref=e1952]: Negative sentiment drift
+          - generic [ref=e1953]: 4d ago
+        - generic [ref=e1954]: 11 mentions · Nike Ukraine
+      - generic [ref=e1957] [cursor=pointer]:
+        - generic [ref=e1958]:
+          - generic [ref=e1959]: important
+          - generic [ref=e1961]: Influencer mention
+          - generic [ref=e1962]: 4d ago
+        - generic [ref=e1963]: 1 mentions · Nike Global
+    - link "View all in Alerts inbox" [ref=e1965] [cursor=pointer]:
+      - /url: "#"
+      - text: View all in Alerts inbox
+      - img [ref=e1966]
+  - generic [ref=e373] [cursor=pointer]:
+    - generic [ref=e375]: Demo controls
+    - generic [ref=e376]: D
