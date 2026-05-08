@@ -1,0 +1,76 @@
+    /*═══ TOKENS ═══════════════════════════════════════════════════*/
+    :root {
+      --bg: #f7f7f5;
+      --bg-card: #ffffff;
+      --bg-hover: #f1f1ee;
+      --bg-active: #e9e9e5;
+      --bg-sunken: #efefec;
+      --border: #e4e4e0;
+      --border-mid: #d2d2cc;
+      --border-strong: #b8b8b1;
+      --text-1: #1c1c1a;
+      --text-2: #5a5a55;
+      --text-3: #6e6e68;
+      --text-inverse: #f7f7f5;
+      --critical: #c92a2a;
+      --critical-soft: #fff1f0;
+      --critical-border: #fca5a5;
+      --important: #b45309;
+      --important-soft: #fffbeb;
+      --important-border: #fde68a;
+      --info: #0369a1;
+      --info-soft: #e0f2fe;
+      --info-border: #7dd3fc;
+      --success: #15803d;
+      --success-soft: #dcfce7;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-hover: #1d4ed8;
+      --accent-border: #bfdbfe;
+      --destructive: #9b1b3b;
+      --warn: #fbbf24;
+      --r-sm: 3px;
+      --r: 5px;
+      --r-lg: 8px;
+      --shadow-sm: 0 1px 2px rgba(28, 28, 26, .05);
+      --shadow: 0 4px 12px rgba(28, 28, 26, .06), 0 2px 4px rgba(28, 28, 26, .04);
+      --shadow-lg: 0 12px 32px rgba(28, 28, 26, .10), 0 4px 8px rgba(28, 28, 26, .06);
+      --shadow-overlay: 0 -1px 0 var(--border), 0 24px 48px rgba(28, 28, 26, .16), 0 8px 16px rgba(28, 28, 26, .08);
+      --t-fast: .12s;
+      --t-base: .18s;
+      --t-slow: .26s;
+      --ease: cubic-bezier(.32, .72, 0, 1);
+      --sidebar: #495D76;
+      --sidebar-text: rgba(255,255,255,.72);
+      --sidebar-text-hi: #ffffff;
+      --sidebar-border: rgba(255,255,255,.12);
+      --sidebar-hover: rgba(255,255,255,.08);
+      --sidebar-active: rgba(255,255,255,.18);
+    }
+
+    :root.dark {
+      color-scheme: dark;
+      --bg: #15151a;
+      --bg-card: #1c1c22;
+      --bg-hover: #23232b;
+      --bg-active: #2a2a33;
+      --bg-sunken: #101015;
+      --border: #2a2a33;
+      --border-mid: #3a3a44;
+      --border-strong: #4a4a55;
+      --text-1: #f0f0ec;
+      --text-2: #a8a8a2;
+      --text-3: #8a8a83;
+      --text-inverse: #1c1c1a;
+      --critical-soft: #3a1414;
+      --critical-border: #7a2424;
+      --important-soft: #3a2a10;
+      --important-border: #7a5424;
+      --info: #38bdf8;
+      --info-soft: #0c2d3d;
+      --info-border: #0369a1;
+      --accent-soft: #1a2540;
+      --accent-border: #2a4080;
+      --success-soft: #103820;
+    }
+

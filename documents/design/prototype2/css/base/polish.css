@@ -1,0 +1,187 @@
+    /*═══ REDUCED MOTION ══════════════════════════════════════════*/
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /*═══ POLISH ══════════════════════════════════════════════════*/
+    /* Scale on press — tactile feedback */
+    .btn:active:not([disabled]) {
+      transform: scale(0.96)
+    }
+
+    .icon-btn:active {
+      transform: scale(0.96)
+    }
+
+    .filter-pill:active {
+      transform: scale(0.96)
+    }
+
+    .nav-item:active {
+      transform: scale(0.97)
+    }
+
+    .nav-child:active {
+      transform: scale(0.97)
+    }
+
+    .preset-card:active {
+      transform: scale(0.97);
+      box-shadow: none
+    }
+
+    /* Hit area extensions — bring small controls to 40×40px without changing visual size */
+    .icon-btn::before {
+      content: '';
+      position: absolute;
+      inset: -4px
+    }
+
+    .row-action {
+      position: relative
+    }
+
+    .row-action::before {
+      content: '';
+      position: absolute;
+      inset: -6px
+    }
+
+    /* Alert row stagger — rows cascade in so the inbox feels alive, not like a page dump */
+    @keyframes rowStaggerIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .list-body .alert-row:nth-child(1) {
+      animation: rowStaggerIn .22s var(--ease) both
+    }
+
+    .list-body .alert-row:nth-child(2) {
+      animation: rowStaggerIn .22s .04s var(--ease) both
+    }
+
+    .list-body .alert-row:nth-child(3) {
+      animation: rowStaggerIn .22s .08s var(--ease) both
+    }
+
+    .list-body .alert-row:nth-child(4) {
+      animation: rowStaggerIn .22s .12s var(--ease) both
+    }
+
+    .list-body .alert-row:nth-child(5) {
+      animation: rowStaggerIn .22s .16s var(--ease) both
+    }
+
+    .list-body .alert-row:nth-child(n+6) {
+      animation: rowStaggerIn .22s .20s var(--ease) both
+    }
+
+    /* Detail pane section stagger — content arrives after the panel slides in */
+    @keyframes sectionIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .detail-header {
+      animation: sectionIn .2s .08s var(--ease) both
+    }
+
+    .detail-body .detail-section:nth-child(1) {
+      animation: sectionIn .2s .14s var(--ease) both
+    }
+
+    .detail-body .detail-section:nth-child(2) {
+      animation: sectionIn .2s .18s var(--ease) both
+    }
+
+    .detail-body .detail-section:nth-child(3) {
+      animation: sectionIn .2s .22s var(--ease) both
+    }
+
+    .detail-body .detail-section:nth-child(4) {
+      animation: sectionIn .2s .26s var(--ease) both
+    }
+
+    .detail-footer {
+      animation: sectionIn .2s .28s var(--ease) both
+    }
+
+    /* Preset card stagger — each card cascades in so the choice screen feels intentional */
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+      }
+    }
+
+    .preset-card:nth-child(1) {
+      animation: cardIn .22s var(--ease) both
+    }
+
+    .preset-card:nth-child(2) {
+      animation: cardIn .22s .05s var(--ease) both
+    }
+
+    .preset-card:nth-child(3) {
+      animation: cardIn .22s .10s var(--ease) both
+    }
+
+    .preset-card:nth-child(4) {
+      animation: cardIn .22s .15s var(--ease) both
+    }
+
+    /* Preset cards — distinct icon colors so cards don't all read the same weight */
+    .preset-card:nth-child(1) .preset-icon {
+      background: var(--critical-soft);
+      color: var(--critical)
+    }
+
+    .preset-card:nth-child(2) .preset-icon {
+      background: var(--important-soft);
+      color: var(--important)
+    }
+
+    .preset-card:nth-child(3) .preset-icon {
+      background: var(--info-soft);
+      color: var(--info)
+    }
+
+    .preset-card:nth-child(4) .preset-icon {
+      background: var(--bg-active);
+      color: var(--text-2)
+    }
+
+    /* Larger icon container to carry the color story */
+    .preset-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r);
+      margin-bottom: 12px
+    }

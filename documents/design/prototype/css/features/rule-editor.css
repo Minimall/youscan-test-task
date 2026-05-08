@@ -1,0 +1,463 @@
+    /*═══ RULE EDITOR ═════════════════════════════════════════════*/
+    .rule-editor {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      background: var(--bg)
+    }
+
+    .rule-form {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 24px 28px;
+      background: var(--bg-card);
+      min-width: 0
+    }
+
+    .rule-chart-side {
+      width: 300px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border);
+      background: var(--bg);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 20px
+    }
+
+    .rule-form.compact {
+      padding: 16px 18px
+    }
+
+    .rule-chart-side.compact {
+      width: 100%;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      padding: 16px 18px
+    }
+
+    .field {
+      margin-bottom: 22px
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-2);
+      letter-spacing: .01em;
+      margin-bottom: 8px;
+      display: block
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      line-height: 1.8
+    }
+
+    .field-text {
+      font-size: 13.5px;
+      color: var(--text-2)
+    }
+
+    .field-input {
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--r);
+      padding: 7px 11px;
+      font-size: 13.5px;
+      color: var(--text-1);
+      width: 100%;
+      max-width: 360px;
+      transition: border-color var(--t-fast), box-shadow var(--t-fast)
+    }
+
+    .field-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--bg-card);
+      box-shadow: 0 0 0 3px var(--accent-soft)
+    }
+
+    .field-input::placeholder {
+      color: var(--text-3)
+    }
+
+    .inline-input {
+      width: 58px;
+      text-align: center;
+      padding: 5px 6px
+    }
+
+    .inline-select {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--r);
+      padding: 5px 6px 5px 10px;
+      font-size: 13.5px;
+      cursor: pointer;
+      gap: 4px;
+      transition: border-color var(--t-fast), background var(--t-fast)
+    }
+
+    .inline-select:hover {
+      border-color: var(--border-strong)
+    }
+
+    .inline-select:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft)
+    }
+
+    .inline-select select {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding-right: 2px;
+      color: var(--text-1);
+      font-size: 13.5px
+    }
+
+    .select-chevron {
+      transform: rotate(90deg);
+      display: flex;
+      align-items: center;
+      color: var(--text-3);
+      pointer-events: none;
+      flex-shrink: 0
+    }
+
+    /* Conditions section as a grouped card */
+    .conditions-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden
+    }
+
+    .conditions-card-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap
+    }
+
+    .conditions-card-row:last-child {
+      border-bottom: none
+    }
+
+    .conditions-card-label {
+      font-size: 12px;
+      color: var(--text-3);
+      flex-shrink: 0;
+      min-width: 100px
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      max-width: 780px;
+      margin-bottom: 24px
+    }
+
+    .preset-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast);
+      text-align: left;
+      touch-action: manipulation
+    }
+
+    .preset-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm)
+    }
+
+    .preset-card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px
+    }
+
+    .preset-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft)
+    }
+
+    .preset-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r-sm);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px
+    }
+
+    .preset-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 3px;
+      text-wrap: balance
+    }
+
+    .preset-desc {
+      font-size: 11.5px;
+      color: var(--text-2);
+      line-height: 1.45;
+      text-wrap: pretty
+    }
+
+    .summary-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 12px 14px;
+      margin-top: 8px;
+      transition: border-color var(--t-base)
+    }
+
+    .summary-box.flash {
+      animation: summaryFlash 1s var(--ease)
+    }
+
+    @keyframes summaryFlash {
+      0% {
+        border-color: var(--accent);
+        background: var(--accent-soft)
+      }
+
+      100% {
+        border-color: var(--border);
+        background: var(--bg)
+      }
+    }
+
+    .summary-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-3);
+      margin-bottom: 5px
+    }
+
+    .summary-text {
+      font-size: 13px;
+      color: var(--text-1);
+      line-height: 1.55
+    }
+
+    .summary-text em {
+      font-style: normal;
+      font-weight: 600;
+      color: var(--text-1);
+      background: var(--bg-active);
+      padding: 0 4px;
+      border-radius: 3px
+    }
+
+    /* Threshold stepper */
+    .threshold-control {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden
+    }
+
+    .threshold-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .threshold-row:last-child { border-bottom: none }
+
+    .threshold-row-label {
+      font-size: 12px;
+      color: var(--text-3);
+      min-width: 108px;
+      flex-shrink: 0
+    }
+
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border-mid);
+      border-radius: var(--r);
+      overflow: hidden;
+      background: var(--bg-card)
+    }
+
+    .stepper-btn {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border: none;
+      color: var(--text-2);
+      font-size: 17px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+      touch-action: manipulation;
+      flex-shrink: 0;
+      user-select: none
+    }
+
+    .stepper-btn:hover { background: var(--bg-hover); color: var(--text-1) }
+    .stepper-btn:active { transform: scale(0.88) }
+
+    .stepper-val {
+      width: 46px;
+      text-align: center;
+      border: none;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      background: var(--bg-card);
+      padding: 4px 2px;
+      -moz-appearance: textfield
+    }
+
+    .stepper-val::-webkit-inner-spin-button,
+    .stepper-val::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
+    .stepper-val:focus { outline: none; background: var(--accent-soft) }
+
+    .threshold-hint {
+      font-size: 12.5px;
+      color: var(--text-2)
+    }
+
+    /* Rule editor sidebar */
+    .rule-editor-sidebar {
+      position: fixed;
+      top: 0;
+      right: -1300px;
+      width: 1260px;
+      height: 100vh;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      box-shadow: -4px 0 32px rgba(28,28,26,.13);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: right 280ms cubic-bezier(0.32, 0.72, 0, 1)
+    }
+
+    .rule-editor-sidebar.open { right: 0 }
+
+    .resi-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--bg-card)
+    }
+
+    .resi-meta { flex: 1; min-width: 0 }
+
+    .resi-context {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-3);
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .resi-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      color: var(--text-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .resi-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0
+    }
+
+    .resi-body {
+      flex: 1;
+      overflow: hidden;
+      display: flex
+    }
+
+    .resi-preset-body {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 24px
+    }
+
+    /* Inside sidebar, chart side is half width */
+    .rule-editor-sidebar .rule-editor { flex: 1; overflow: hidden }
+    .rule-editor-sidebar .rule-form { max-width: none }
+    .rule-editor-sidebar .rule-chart-side { width: 550px }
+
+    /* Multi-select chip groups */
+    .ms-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-items: center
+    }
+
+    .ms-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 12px;
+      border: 1px solid var(--border-mid);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: var(--bg-card);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+      user-select: none;
+      touch-action: manipulation
+    }
+
+    .ms-chip:hover { border-color: var(--border-strong); color: var(--text-1) }
+
+    .ms-chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff
+    }
+

@@ -1,0 +1,44 @@
+    /*═══ SEVERITY BADGE ══════════════════════════════════════════*/
+    .sev {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 11px;
+      line-height: 1.4;
+      letter-spacing: .01em
+    }
+
+    .sev-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor
+    }
+
+    .sev.critical {
+      background: var(--critical);
+      color: #fff;
+      border: 1px solid var(--critical)
+    }
+
+    .sev.important {
+      background: var(--important-soft);
+      color: var(--important);
+      border: 1px solid var(--important-border)
+    }
+
+    .sev.info {
+      background: var(--info-soft);
+      color: var(--info);
+      border: 1px solid var(--info-border)
+    }
+
+    .sev.muted {
+      background: var(--bg);
+      color: var(--text-3);
+      border: 1px solid var(--border)
+    }
+

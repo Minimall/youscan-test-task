@@ -1,0 +1,88 @@
+    /*═══ COMMAND PALETTE ════════════════════════════════════════*/
+    .cmdk {
+      position: fixed;
+      top: 18%;
+      left: 50%;
+      transform: translateX(-50%) scale(.96);
+      width: 560px;
+      max-width: 92vw;
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: 80;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform var(--t-base) var(--ease), opacity var(--t-base) var(--ease)
+    }
+
+    .cmdk.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) scale(1)
+    }
+
+    .cmdk-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .cmdk-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: var(--text-1)
+    }
+
+    .cmdk-input::placeholder {
+      color: var(--text-3)
+    }
+
+    .cmdk-list {
+      max-height: 340px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 6px 6px 8px
+    }
+
+    .cmdk-section {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      padding: 8px 10px 4px
+    }
+
+    .cmdk-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      font-size: 13px
+    }
+
+    .cmdk-item.active {
+      background: var(--bg-active)
+    }
+
+    .cmdk-item-icon {
+      width: 14px;
+      height: 14px;
+      color: var(--text-3);
+      flex-shrink: 0
+    }
+
+    .cmdk-item-shortcut {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-3)
+    }
+

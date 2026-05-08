@@ -1,0 +1,102 @@
+    /*═══ TABLE (Rules list) ══════════════════════════════════════*/
+    .tbl-wrap {
+      padding: 18px 24px;
+      flex: 1;
+      overflow: auto;
+      background: var(--bg)
+    }
+
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden
+    }
+
+    .tbl th {
+      text-align: left;
+      padding: 9px 14px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--text-3);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      background: var(--bg-card);
+      position: sticky;
+      top: 0
+    }
+
+    .tbl td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      font-size: 13px
+    }
+
+    .tbl tr:last-child td {
+      border-bottom: none
+    }
+
+    .tbl tbody tr {
+      cursor: pointer;
+      transition: background var(--t-fast)
+    }
+
+    .tbl tbody tr:hover {
+      background: var(--bg-hover)
+    }
+
+    .tbl tbody tr.zero-fire td {
+      opacity: .5
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums
+    }
+
+    .health-warn {
+      color: var(--important);
+      font-weight: 500
+    }
+
+    .health-crit {
+      color: var(--critical);
+      font-weight: 500
+    }
+
+    .row-actions-cell {
+      width: 1px;
+      white-space: nowrap
+    }
+
+    .row-actions-cell .actions {
+      display: flex;
+      gap: 2px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--t-fast)
+    }
+
+    .tbl tbody tr:hover .row-actions-cell .actions {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    .rule-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .rule-bar {
+      width: 3px;
+      height: 18px;
+      border-radius: 2px;
+      flex-shrink: 0
+    }
+

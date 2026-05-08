@@ -1,0 +1,97 @@
+    /*═══ BUTTONS ═════════════════════════════════════════════════*/
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--r-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      line-height: 1.4;
+      user-select: none;
+      touch-action: manipulation
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px
+    }
+
+    .btn-primary {
+      background: var(--text-1);
+      color: var(--bg-card);
+      border-color: var(--text-1)
+    }
+
+    .btn-primary:hover {
+      background: #000
+    }
+
+    :root.dark .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff
+    }
+
+    :root.dark .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover)
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-1);
+      border-color: var(--border-mid)
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-strong)
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-2);
+      border-color: transparent
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-hover);
+      color: var(--text-1)
+    }
+
+    .btn-danger {
+      background: var(--bg-card);
+      color: var(--destructive);
+      border-color: var(--border-mid)
+    }
+
+    .btn-danger:hover {
+      background: #fff1f4;
+      border-color: var(--destructive)
+    }
+
+    :root.dark .btn-danger:hover {
+      background: #3a1a24
+    }
+
+    .btn-sm {
+      padding: 4px 9px;
+      font-size: 12px
+    }
+
+    .btn-icon {
+      padding: 6px;
+      width: 30px;
+      justify-content: center
+    }
+
+    .btn[disabled] {
+      opacity: .5;
+      cursor: not-allowed
+    }
+

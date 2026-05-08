@@ -1,0 +1,75 @@
+    /*═══ EDIT-FROM-ALERT (split panel inside detail pane) ══════════*/
+    .detail-pane.with-editor {
+      width: 820px
+    }
+
+    .editor-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 440px;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-overlay);
+      transform: translateX(100%);
+      transition: transform var(--t-base) var(--ease);
+      z-index: 8
+    }
+
+    .editor-panel.open {
+      transform: translateX(0)
+    }
+
+    .editor-panel-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      flex-shrink: 0
+    }
+
+    .editor-panel-head .ep-context {
+      font-size: 10.5px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .editor-panel-head .ep-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3
+    }
+
+    .editor-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 18px
+    }
+
+    .editor-panel-foot {
+      padding: 11px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      background: var(--bg-card)
+    }
+
+    .editor-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0
+    }
+

@@ -26,7 +26,18 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:8766/documents/design/prototype/prototype.html\")",
       "Bash(python3 -m http.server 7788)",
       "Bash(echo \"PID:$!\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:7788/prototype.html)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:7788/prototype.html)",
+      "Bash(lsof -ti:7788)",
+      "Bash(xargs kill -9)",
+      "Bash(open *)",
+      "Bash(lsof -ti:8765)",
+      "Bash(kill %2)",
+      "Bash(kill %1)",
+      "Bash(python3 -m http.server 9877)",
+      "Bash(curl -s http://localhost:9877/index.html)",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_press_key",
+      "Bash(sort -t: -k3 -n)"
     ]
   }
 }
